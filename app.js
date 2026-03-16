@@ -1,9 +1,9 @@
-// app.js - NoshVallet Interactions and Logic
+// app.js - NoshWallet Interactions and Logic
 
 document.addEventListener('DOMContentLoaded', () => {
     
     // --- Auth Check ---
-    const currentUser = JSON.parse(sessionStorage.getItem('noshValletAuth'));
+    const currentUser = JSON.parse(sessionStorage.getItem('noshWalletAuth'));
     
     if (!currentUser) {
         // Not logged in, redirect to landing page
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            sessionStorage.removeItem('noshValletAuth');
+            sessionStorage.removeItem('noshWalletAuth');
             window.location.href = 'index.html'; // Redirect to landing
         });
     }
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load state from localStorage on startup
     function loadState() {
-        const savedState = localStorage.getItem('noshValletState');
+        const savedState = localStorage.getItem('noshWalletState');
         if (savedState) {
             state = JSON.parse(savedState);
             // Ensure notifications exist in old states
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
             state.notifications = [
                 {
                     id: generateId(),
-                    title: 'Welcome to NoshVallet!',
+                    title: 'Welcome to NoshWallet!',
                     message: 'Thanks for joining. Explore your new premium wallet.',
                     date: new Date().toISOString(),
                     type: 'info',
@@ -91,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Save state to localStorage
     function saveState() {
-        localStorage.setItem('noshValletState', JSON.stringify(state));
+        localStorage.setItem('noshWalletState', JSON.stringify(state));
         updateUI();
     }
 
@@ -696,7 +696,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const newName = document.getElementById('settings-name').value.trim();
             if (newName) {
                 currentUser.name = newName;
-                sessionStorage.setItem('noshValletAuth', JSON.stringify(currentUser));
+                sessionStorage.setItem('noshWalletAuth', JSON.stringify(currentUser));
                 
                 // Update specific elements without whole reload
                 document.querySelectorAll('.user-name').forEach(el => el.textContent = newName);
@@ -874,10 +874,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // One-time auto-injection for first-time premium test
-    if (!localStorage.getItem('noshValletTestInjected')) {
+    if (!localStorage.getItem('noshWalletTestInjected')) {
         setTimeout(() => {
             injectTestData(true);
-            localStorage.setItem('noshValletTestInjected', 'true');
+            localStorage.setItem('noshWalletTestInjected', 'true');
         }, 1000); // Slight delay for visual pop
     }
 

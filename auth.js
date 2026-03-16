@@ -1,19 +1,19 @@
-// auth.js - NoshVallet Authentication Logic
+// auth.js - NoshWallet Authentication Logic
 
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- Data Management ---
     function getUsers() {
-        const users = localStorage.getItem('noshValletUsers');
+        const users = localStorage.getItem('noshWalletUsers');
         return users ? JSON.parse(users) : [];
     }
 
     function saveUsers(users) {
-        localStorage.setItem('noshValletUsers', JSON.stringify(users));
+        localStorage.setItem('noshWalletUsers', JSON.stringify(users));
     }
 
     // --- Auth State ---
-    const currentUser = sessionStorage.getItem('noshValletAuth');
+    const currentUser = sessionStorage.getItem('noshWalletAuth');
 
     // If already logged in, redirect to dashboard
     if (currentUser && window.location.pathname.includes('index.html')) {
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const user = users.find(u => u.email === email && u.password === password);
 
             if (user) {
-                sessionStorage.setItem('noshValletAuth', JSON.stringify({
+                sessionStorage.setItem('noshWalletAuth', JSON.stringify({
                     name: user.name,
                     email: user.email,
                     walletId: user.walletId
@@ -109,14 +109,14 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast('Account created! Entering dashboard...', false);
             
             setTimeout(() => {
-                sessionStorage.setItem('noshValletAuth', JSON.stringify({
+                sessionStorage.setItem('noshWalletAuth', JSON.stringify({
                     name: newUser.name,
                     email: newUser.email,
                     walletId: newUser.walletId
                 }));
                 
                 // Seed initial state for new user
-                localStorage.setItem('noshValletState', JSON.stringify({
+                localStorage.setItem('noshWalletState', JSON.stringify({
                     balance: 1000.00,
                     transactions: [{
                         id: 'WELCOME',

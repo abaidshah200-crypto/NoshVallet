@@ -3,7 +3,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     
     // --- Auth Check ---
-    const currentUser = JSON.parse(sessionStorage.getItem('noshValletAuth'));
+    const currentUser = JSON.parse(sessionStorage.getItem('noshWalletAuth'));
     
     // If logged in, don't stay on landing page
     if (currentUser) {

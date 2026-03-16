@@ -2357,7 +2357,20 @@ input:checked + .slider:before {
 
     /* Landing Page Mobile */
     .landing-nav {
-        padding: 16px 20px;
+        padding: 16px 10px;
+    }
+
+    .nav-container {
+        padding: 0 15px;
+    }
+
+    .landing-actions {
+        gap: 8px;
+    }
+
+    .header-auth-btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
     }
 
     .hero-section {
@@ -2411,6 +2424,28 @@ input:checked + .slider:before {
 
     .auth-header .logo {
         font-size: 1.4rem;
+    }
+
+    .landing-nav {
+        padding: 12px 8px;
+    }
+
+    .nav-container {
+        padding: 0 10px;
+    }
+
+    .landing-actions {
+        gap: 5px;
+    }
+
+    .header-auth-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+
+    .landing-nav .logo {
+        gap: 8px;
+        font-size: 1.2rem;
     }
 }
 
