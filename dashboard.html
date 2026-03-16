@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoshVallet - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="bg-mesh-container">
+        <div class="glow-blob glow-1"></div>
+        <div class="glow-blob glow-2"></div>
+        <div class="glow-blob glow-3"></div>
+    </div>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fa-solid fa-wallet"></i>
+                    <span>NoshVallet</span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active" id="nav-dashboard">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-transactions">
+                    <i class="fa-solid fa-money-bill-transfer"></i>
+                    <span>Transactions</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-analytics">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="#" class="nav-item" id="nav-settings">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" class="nav-item logout">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Log Out</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Sidebar Backdrop for Mobile -->
+        <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+        <!-- Main Content Area -->
+        <div class="main-wrapper">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="menu-toggle-btn" id="menu-toggle">
+                        <i class="fa-solid fa-bars-staggered"></i>
+                    </button>
+                    <div class="search-bar">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="global-search" placeholder="Search transactions...">
+                    </div>
+                </div>
+                <div class="header-actions" id="auth-actions-container">
+                    <div class="notification-wrapper">
+                        <button class="icon-btn" id="notif-bell">
+                            <i class="fa-regular fa-bell"></i>
+                            <span class="badge" id="notif-badge">0</span>
+                        </button>
+                        <div class="notification-panel" id="notif-panel">
+                            <div class="notif-header">
+                                <h3>Notifications</h3>
+                                <span class="mark-read" id="mark-all-read">Mark all as read</span>
+                            </div>
+                            <div class="notif-list" id="notif-list">
+                                <!-- Notifications populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <main class="dashboard-content view-section" id="view-dashboard">
+                <div class="page-title">
+                    <h1>Dashboard Overview</h1>
+                    <p>Manage your funds and track your transactions easily.</p>
+                </div>
+
+                <div class="top-widgets">
+                    <!-- Balance Card -->
+                    <div class="widget-card balance-card">
+                        <div class="card-top">
+                            <div>
+                                <h3 class="card-title">Total Balance</h3>
+                                <p class="card-subtitle">Available Funds</p>
+                            </div>
+                            <div class="card-icon"><i class="fa-solid fa-wallet"></i></div>
+                        </div>
+                        <div class="balance-amount-display">
+                            <span class="currency">Rs.</span>
+                            <h1 id="total-balance">0.00</h1>
+                        </div>
+                        <div class="card-bottom">
+                            <span class="status"><i class="fa-solid fa-circle-check"></i> Account Verified</span>
+                            <span class="wallet-id">ID: NV-492083</span>
+                        </div>
+                    </div>
+
+                    <!-- Actions Card -->
+                    <div class="widget-card actions-card">
+                        <h3 class="card-title">Quick Actions</h3>
+                        <div class="action-grid">
+                            <button class="action-btn" id="btn-deposit">
+                                <div class="action-icon yellow"><i class="fa-solid fa-arrow-down"></i></div>
+                                <span>Deposit</span>
+                            </button>
+                            <button class="action-btn" id="btn-withdraw">
+                                <div class="action-icon white"><i class="fa-solid fa-arrow-up"></i></div>
+                                <span>Withdraw</span>
+                            </button>
+                            <button class="action-btn" id="btn-send">
+                                <div class="action-icon black"><i class="fa-solid fa-paper-plane"></i></div>
+                                <span>Send</span>
+                            </button>
+                            <button class="action-btn" id="btn-pay">
+                                <div class="action-icon gray"><i class="fa-solid fa-qrcode"></i></div>
+                                <span>Pay</span>
+                            </button>
+                            <button class="action-btn" id="btn-transfer">
+                                <div class="action-icon yellow-light"><i class="fa-solid fa-building-columns"></i></div>
+                                <span>Transfer</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transactions Area -->
+                <div class="bottom-widgets">
+                    <div class="widget-card transactions-widget">
+                        <div class="widget-header">
+                            <h3 class="card-title">Recent Transactions</h3>
+                            <button class="btn-text">View All <i class="fa-solid fa-arrow-right"></i></button>
+                        </div>
+                        <div class="table-container">
+                            <table class="transactions-table">
+                                <thead>
+                                    <tr>
+                                        <th>Transaction Details</th>
+                                        <th>Date & Time</th>
+                                        <th>Reference ID</th>
+                                        <th class="text-right">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transactions-container">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Transactions View -->
+            <main class="dashboard-content view-section hidden" id="view-transactions">
+                <div class="page-title with-back">
+                    <button class="content-back-btn" title="Back to Dashboard"><i class="fa-solid fa-arrow-left"></i></button>
+                    <div>
+                        <h1>Transaction History</h1>
+                        <p>A full record of all your wallet activities.</p>
+                    </div>
+                </div>
+                <div class="widget-card full-transactions">
+                    <div class="table-controls mb-4">
+                        <input type="text" id="tx-search" placeholder="Search by title or ID..." class="search-input-alt">
+                        <select id="tx-filter" class="filter-select">
+                            <option value="all">All Types</option>
+                            <option value="deposit">Deposits</option>
+                            <option value="withdraw">Withdrawals</option>
+                        </select>
+                    </div>
+                    <div class="table-container">
+                        <table class="transactions-table">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Date</th>
+                                    <th>Ref ID</th>
+                                    <th class="text-right">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="full-transactions-container">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Analytics View -->
+            <main class="dashboard-content view-section hidden" id="view-analytics">
+                <div class="page-title with-back">
+                    <button class="content-back-btn" title="Back to Dashboard"><i class="fa-solid fa-arrow-left"></i></button>
+                    <div>
+                        <h1>Spending Analytics</h1>
+                        <p>Understand your income and expenses visually.</p>
+                    </div>
+                </div>
+                <div class="analytics-grid">
+                    <div class="widget-card chart-card">
+                        <h3 class="card-title">Monthly Flow</h3>
+                        <div class="chart-container-dummy">
+                            <div class="bar-chart">
+                                <div class="bar-set"><div class="bar pos" style="height: 60%"></div><div class="bar neg" style="height: 40%"></div><span>Jan</span></div>
+                                <div class="bar-set"><div class="bar pos" style="height: 80%"></div><div class="bar neg" style="height: 30%"></div><span>Feb</span></div>
+                                <div class="bar-set"><div class="bar pos" style="height: 45%"></div><div class="bar neg" style="height: 70%"></div><span>Mar</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="widget-card stats-summary-card">
+                        <h3 class="card-title">Summary</h3>
+                        <div class="mini-stats">
+                            <div class="m-stat">
+                                <span class="label">Total Income</span>
+                                <span class="value positive" id="total-income-val">Rs. 0.00</span>
+                            </div>
+                            <div class="m-stat">
+                                <span class="label">Total Expenses</span>
+                                <span class="value negative" id="total-expense-val">Rs. 0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Settings View -->
+            <main class="dashboard-content view-section hidden" id="view-settings">
+                <div class="page-title row-between with-back">
+                    <div class="flex-center gap-4">
+                        <button class="content-back-btn" title="Back to Dashboard"><i class="fa-solid fa-arrow-left"></i></button>
+                        <div>
+                            <h1>Account Settings</h1>
+                            <p>Manage your profile, wallet security, and preferences.</p>
+                        </div>
+                    </div>
+                    <div class="last-sync">
+                        <i class="fa-solid fa-rotate"></i> Last sync: Just now
+                    </div>
+                </div>
+
+                <div class="settings-page-wrapper">
+                    <div class="settings-container-centered">
+                        <!-- Profile Card -->
+                        <div class="widget-card settings-premium-card">
+                            <div class="card-section-header">
+                                <i class="fa-solid fa-user-gear"></i>
+                                <h3>Profile Details</h3>
+                            </div>
+                            <div class="profile-header-premium">
+                                <div class="avatar-large-wrapper">
+                                    <div class="avatar-large"><i class="fa-solid fa-user"></i></div>
+                                    <button class="avatar-edit-btn" title="Change Avatar"><i class="fa-solid fa-camera"></i></button>
+                                </div>
+                                <div class="profile-meta">
+                                    <h2 class="user-name">User Name</h2>
+                                    <p class="user-email">user@example.com</p>
+                                    <div class="flex-center gap-2 mt-2">
+                                        <span class="member-badge">Diamond Member</span>
+                                        <span class="verification-badge"><i class="fa-solid fa-shield-check"></i> Verified</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <form id="settings-form" class="mt-4">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label>Full Display Name</label>
+                                        <div class="input-with-icon">
+                                            <i class="fa-solid fa-signature"></i>
+                                            <input type="text" id="settings-name" placeholder="How should we call you?">
+                                        </div>
+                                        <span class="form-help">Visible across your dashboard and transactions.</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Account Email</label>
+                                        <div class="input-with-icon disabled">
+                                            <i class="fa-solid fa-envelope"></i>
+                                            <input type="text" id="settings-email-display" disabled>
+                                        </div>
+                                        <span class="form-help">Email cannot be changed currently.</span>
+                                    </div>
+                                </div>
+                                <div class="text-right mt-3">
+                                    <button type="submit" class="submit-btn solid-yellow btn-small">Update Profile</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Security & Wallet Card -->
+                        <div class="widget-card settings-premium-card mt-4">
+                            <div class="card-section-header">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                <h3>Security & Identity</h3>
+                            </div>
+                            <div class="security-list mt-3">
+                                <div class="security-item">
+                                    <div class="s-info">
+                                        <span class="s-label">Wallet Reference ID</span>
+                                        <span class="s-value wallet-id">ID: NV-000000</span>
+                                        <p class="s-desc">Use this ID for receiving funds from other NoshVallet users.</p>
+                                    </div>
+                                    <button class="icon-btn-circle" title="Copy ID"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                                <div class="security-item">
+                                    <div class="s-info">
+                                        <span class="s-label">Two-Factor Authentication</span>
+                                        <span class="s-value text-success">Active Protection <i class="fa-solid fa-check-double"></i></span>
+                                        <p class="s-desc">Your account is secured with 2FA for all major transactions.</p>
+                                    </div>
+                                    <button class="btn-outline-small" id="btn-configure-2fa">Configure</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preferences Card -->
+                        <div class="widget-card settings-premium-card mt-4">
+                            <div class="card-section-header">
+                                <i class="fa-solid fa-sliders"></i>
+                                <h3>Wallet Preferences</h3>
+                            </div>
+                            <div class="preference-list mt-3">
+                                <div class="pref-item">
+                                    <div class="pref-info">
+                                        <span class="pref-label">Email Notifications</span>
+                                        <p class="pref-desc">Receive weekly summaries and transaction alerts via email.</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="pref-item">
+                                    <div class="pref-info">
+                                        <span class="pref-label">Push Notifications</span>
+                                        <p class="pref-desc">Instant alerts for all wallet activity and security logins.</p>
+                                    </div>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Developer Tools Card -->
+                        <div class="widget-card settings-premium-card mt-4" style="border-left: 4px solid var(--primary-yellow);">
+                            <div class="card-section-header">
+                                <i class="fa-solid fa-code"></i>
+                                <h3>Developer Tools</h3>
+                            </div>
+                            <div class="preference-list mt-3">
+                                <div class="pref-item">
+                                    <div class="pref-info">
+                                        <span class="pref-label">Testing Data Injection</span>
+                                        <p class="pref-desc">Populate your wallet with random funds and transactions for testing flows.</p>
+                                    </div>
+                                    <button class="btn-outline-small" id="btn-inject-test-data" style="color: var(--primary-yellow-hover); border-color: var(--primary-yellow);">Inject Funds</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Danger Zone Card -->
+                        <div class="widget-card risk-card mt-4">
+                            <div class="card-section-header danger">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <h3>Advanced Actions</h3>
+                            </div>
+                            <div class="danger-box-premium">
+                                <div class="danger-info">
+                                    <h4>Purge All Wallet Data</h4>
+                                    <p>This will permanently erase all transaction history, analytics data, and reset your balance. These actions are destructive and cannot be undone.</p>
+                                </div>
+                                <button class="btn-danger-premium" id="btn-reset-data">
+                                    <i class="fa-solid fa-trash-can"></i> Reset Wallet
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+        </div>
+    <!-- Modals -->
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content auth-modal">
+            <div class="modal-header">
+                <button class="close-btn absolute-right"><i class="fa-solid fa-xmark"></i></button>
+                <div class="logo justify-center mb-2">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <h2>Welcome Back</h2>
+                <p class="text-sm text-muted">Sign in to manage your wallet</p>
+            </div>
+            <div class="modal-body pb-0">
+                <form id="login-form">
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <div class="input-with-icon">
+                            <i class="fa-regular fa-envelope"></i>
+                            <input type="email" id="login-email" placeholder="you@example.com" required autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="login-password" placeholder="Enter your password" required autocomplete="new-password">
+                            <button type="button" class="password-toggle" title="Toggle Password Visibility">
+                                <i class="fa-solid fa-eye-slash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn solid-yellow mt-4">Sign In</button>
+                </form>
+                <div class="auth-footer mt-4">
+                    <p>Don't have an account? <a href="#" id="switch-to-register">Sign up</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="register-modal" class="modal">
+        <div class="modal-content auth-modal">
+            <div class="modal-header border-none text-center block">
+                <button class="close-btn absolute-right"><i class="fa-solid fa-xmark"></i></button>
+                <div class="logo justify-center mb-2">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <h2>Create Account</h2>
+                <p class="text-sm text-muted">Join us to start managing your funds</p>
+            </div>
+            <div class="modal-body pb-0">
+                <form id="register-form">
+                    <div class="form-group mb-3">
+                        <label>Full Name</label>
+                        <div class="input-with-icon">
+                            <i class="fa-regular fa-user"></i>
+                            <input type="text" id="reg-name" placeholder="John Doe" required autocomplete="name">
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Email Address</label>
+                        <div class="input-with-icon">
+                            <i class="fa-regular fa-envelope"></i>
+                            <input type="email" id="reg-email" placeholder="you@example.com" required autocomplete="email">
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>Password</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="reg-password" placeholder="Create a password" required minlength="6" autocomplete="new-password">
+                            <button type="button" class="password-toggle" title="Toggle Password Visibility">
+                                <i class="fa-solid fa-eye-slash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn solid-yellow">Create Account</button>
+                </form>
+                <div class="auth-footer mt-4">
+                    <p>Already have an account? <a href="#" id="switch-to-login">Sign in</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Deposit Modal -->
+    <div id="deposit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Deposit Funds</h2>
+                <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="deposit-form">
+                    <div class="form-group">
+                        <label>Amount (Rs.)</label>
+                        <input type="number" id="deposit-amount" placeholder="Enter amount..." required min="1" step="0.01">
+                    </div>
+                    <div class="quick-amounts">
+                        <button type="button" class="quick-btn" data-amount="500">+500</button>
+                        <button type="button" class="quick-btn" data-amount="1000">+1000</button>
+                        <button type="button" class="quick-btn" data-amount="5000">+5000</button>
+                    </div>
+                    <button type="submit" class="submit-btn solid-yellow">Proceed to Deposit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div id="withdraw-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Withdraw Funds</h2>
+                <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="withdraw-form">
+                    <div class="form-group">
+                        <label>Amount (Rs.)</label>
+                        <input type="number" id="withdraw-amount" placeholder="Enter amount..." required min="1" step="0.01">
+                    </div>
+                    <p class="helper-text">Withdrawals are transferred directly to your linked bank account within 24 hours.</p>
+                    <button type="submit" class="submit-btn solid-black">Confirm Withdrawal</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Send Money Modal -->
+    <div id="send-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Send Money</h2>
+                <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="send-form">
+                    <div class="form-group">
+                        <label>Receiver Wallet ID or Email</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-user-tag"></i>
+                            <input type="text" id="send-recipient" placeholder="Enter NV-ID or email..." required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount (Rs.)</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-money-bill-1"></i>
+                            <input type="number" id="send-amount" placeholder="0.00" required min="1" step="0.01">
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn solid-black">Send Funds Now</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pay (Merchant) Modal -->
+    <div id="pay-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Merchant Payment</h2>
+                <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="pay-form">
+                    <div class="form-group">
+                        <label>Select Merchant</label>
+                        <select id="pay-merchant" required style="width: 100%; padding: 14px; border: 1px solid var(--gray-mid); border-radius: var(--border-radius-sm); font-family: inherit; margin-bottom: 20px;">
+                            <option value="" disabled selected>Select a merchant...</option>
+                            <option value="Daraz Shopping">Daraz Shopping</option>
+                            <option value="Foodpanda">Foodpanda</option>
+                            <option value="K-Electric">K-Electric</option>
+                            <option value="Uber / Careem">Uber / Careem</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount (Rs.)</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-tag"></i>
+                            <input type="number" id="pay-amount" placeholder="0.00" required min="1" step="0.01">
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn solid-yellow">Pay Merchant</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- External Transfer Modal -->
+    <div id="transfer-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>External Transfer</h2>
+                <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="transfer-form">
+                    <div class="form-group">
+                        <label>Transfer Method</label>
+                        <select id="transfer-method" required style="width: 100%; padding: 14px; border: 1px solid var(--gray-mid); border-radius: var(--border-radius-sm); font-family: inherit; margin-bottom: 20px;">
+                            <option value="" disabled selected>Select method...</option>
+                            <option value="Bank Account">Bank Account</option>
+                            <option value="JazzCash">JazzCash</option>
+                            <option value="EasyPaisa">EasyPaisa</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label id="transfer-label">Account / Mobile Number</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-hashtag"></i>
+                            <input type="text" id="transfer-account" placeholder="Enter account or phone..." required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount (Rs.)</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-money-bill-transfer"></i>
+                            <input type="number" id="transfer-amount" placeholder="0.00" required min="1" step="0.01">
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn solid-black">Transfer Funds</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast">
+        <div class="toast-indicator"></div>
+        <div class="toast-content">
+            <i class="toast-icon fa-solid fa-circle-check"></i>
+            <span id="toast-message">Operation successful!</span>
+        </div>
+    </div>
+    
+    <script src="auth.js"></script>
+    <!-- 2FA Configuration Modal -->
+    <div id="two-fa-modal" class="modal">
+        <div class="modal-content auth-modal">
+            <div class="modal-header">
+                <h2>Security Configuration</h2>
+                <button class="close-btn" id="close-2fa-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <p class="helper-text">Select your preferred two-factor authentication method to secure your transactions.</p>
+                
+                <div class="security-option-list">
+                    <div class="security-opt active">
+                        <div class="opt-icon"><i class="fa-solid fa-mobile-screen"></i></div>
+                        <div class="opt-details">
+                            <span class="opt-title">Authenticator App</span>
+                            <span class="opt-desc">Use Google Authenticator or Authy</span>
+                        </div>
+                        <i class="fa-solid fa-circle-check check-icon"></i>
+                    </div>
+                    
+                    <div class="security-opt">
+                        <div class="opt-icon"><i class="fa-solid fa-comment-sms"></i></div>
+                        <div class="opt-details">
+                            <span class="opt-title">SMS Verification</span>
+                            <span class="opt-desc">Codes sent to your registered phone</span>
+                        </div>
+                        <i class="fa-solid fa-circle-check check-icon"></i>
+                    </div>
+                    
+                    <div class="security-opt">
+                        <div class="opt-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+                        <div class="opt-details">
+                            <span class="opt-title">Email OTP</span>
+                            <span class="opt-desc">Receive codes in your inbox</span>
+                        </div>
+                        <i class="fa-solid fa-circle-check check-icon"></i>
+                    </div>
+                </div>
+
+                <div class="modal-actions mt-4">
+                    <button class="submit-btn solid-yellow" id="btn-save-2fa">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
