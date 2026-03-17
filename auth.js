@@ -56,6 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Login Handlers ---
+    let pendingUser = null; // Store user during 2FA
+
     if (loginForm) {
         loginForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -66,18 +68,67 @@ document.addEventListener('DOMContentLoaded', () => {
             const user = users.find(u => u.email === email && u.password === password);
 
             if (user) {
-                sessionStorage.setItem('noshWalletAuth', JSON.stringify({
-                    name: user.name,
-                    email: user.email,
-                    walletId: user.walletId
-                }));
-                showToast('Login Successful!', false);
-                setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 800);
+                // Check if 2FA is enabled
+                if (user.twoFA && user.twoFA !== 'None' && user.twoFA !== 'Authenticator App') { // Simplified check for demo
+                    pendingUser = user;
+                    const otpModal = document.getElementById('otp-modal');
+                    const otpMessage = document.getElementById('otp-message');
+                    
+                    if (otpModal) {
+                        const contact = user.twoFA === 'SMS Verification' ? (user.phone || 'associated phone') : user.email;
+                        if (otpMessage) otpMessage.innerHTML = `Enter the 6-digit code sent to <br> <strong class="highlight-yellow">${contact}</strong>`;
+                        
+                        showToast(`Security code sent to ${contact}`, false);
+                        otpModal.classList.add('show');
+                    }
+                    return;
+                }
+
+                // Standard login if no 2FA (or for Authenticator App which we simulate as enabled/disabled)
+                completeLogin(user);
             } else {
                 showToast('Invalid email or password.', true);
             }
+        });
+    }
+
+    function completeLogin(user) {
+        sessionStorage.setItem('noshWalletAuth', JSON.stringify({
+            name: user.name,
+            email: user.email,
+            walletId: user.walletId,
+            phone: user.phone || 'Not set',
+            twoFA: user.twoFA || 'Authenticator App'
+        }));
+        
+        showToast('Login Successful!', false);
+        setTimeout(() => {
+            window.location.href = 'dashboard.html';
+        }, 800);
+    }
+
+    // --- OTP Form Handlers ---
+    const otpForm = document.getElementById('otp-form');
+    if (otpForm) {
+        otpForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const otpValue = document.getElementById('otp-input').value;
+
+            if (otpValue === '123456') {
+                if (pendingUser) {
+                    completeLogin(pendingUser);
+                }
+            } else {
+                showToast('Invalid verification code.', true);
+            }
+        });
+    }
+
+    const btnResendOtp = document.getElementById('resend-otp');
+    if (btnResendOtp) {
+        btnResendOtp.addEventListener('click', (e) => {
+            e.preventDefault();
+            showToast('New security code sent!', false);
         });
     }
 
@@ -88,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const name = document.getElementById('reg-name').value;
             const email = document.getElementById('reg-email').value;
             const password = document.getElementById('reg-password').value;
+            const phone = document.getElementById('reg-phone').value;
 
             const users = getUsers();
             
@@ -100,7 +152,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: name,
                 email: email,
                 password: password,
-                walletId: 'NV-' + Math.floor(Math.random() * 900000 + 100000), 
+                phone: phone,
+                walletId: 'NV-' + Math.floor(Math.random() * 900000 + 100000),
+                twoFA: 'Authenticator App' // Default
             };
 
             users.push(newUser);
@@ -112,7 +166,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 sessionStorage.setItem('noshWalletAuth', JSON.stringify({
                     name: newUser.name,
                     email: newUser.email,
-                    walletId: newUser.walletId
+                    walletId: newUser.walletId,
+                    phone: newUser.phone,
+                    twoFA: newUser.twoFA
                 }));
                 
                 // Seed initial state for new user
@@ -137,18 +193,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const demoEmail = 'demo@noshwallet.com';
     const demoPassword = 'demo1234';
 
-    // Seed Demo User if not exists
+    // Seed/refresh Demo User every page load to ensure it's always up to date
     (function seedDemoUser() {
-        const users = getUsers();
-        if (!users.some(u => u.email === demoEmail)) {
-            users.push({
-                name: 'Demo User',
-                email: demoEmail,
-                password: demoPassword,
-                walletId: 'NV-DEMO-001'
-            });
-            saveUsers(users);
+        let users = getUsers();
+        const demoIndex = users.findIndex(u => u.email === 'demo@noshwallet.com');
+        const freshDemo = {
+            name: 'Demo User',
+            email: 'demo@noshwallet.com',
+            password: 'demo1234',
+            phone: '0300 1234567',
+            walletId: 'NV-Demo01',
+            twoFA: 'Authenticator App'
+        };
+        if (demoIndex === -1) {
+            users.push(freshDemo);
+        } else {
+            users[demoIndex] = freshDemo; // Always refresh demo data
         }
+        saveUsers(users);
     })();
 
     if (quickLoginBtn) {
@@ -163,8 +225,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast('Pre-filling demo credentials...', false);
                 
                 setTimeout(() => {
-                    loginForm.dispatchEvent(new Event('submit'));
-                }, 1000);
+                    // Use a proper SubmitEvent so the handler fires in all browsers
+                    loginForm.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+                }, 800);
             }
         });
     }

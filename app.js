@@ -238,6 +238,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const settingsEmailInput = document.getElementById('settings-email');
         if (settingsEmailInput) settingsEmailInput.value = currentUser.email;
         
+        const settingsPhoneInput = document.getElementById('settings-phone');
+        if (settingsPhoneInput) settingsPhoneInput.value = currentUser.phone || '';
+        
         const settingsNameInput = document.getElementById('settings-name');
         if (settingsNameInput) {
              settingsNameInput.placeholder = currentUser.name;
@@ -718,6 +721,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const newName = document.getElementById('settings-name').value.trim();
             const newEmail = document.getElementById('settings-email').value.trim();
+            const newPhone = document.getElementById('settings-phone').value.trim();
             const newPass = document.getElementById('settings-pass').value;
             const confirmPass = document.getElementById('settings-pass-confirm').value;
 
@@ -747,6 +751,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update user object
             if (newName) currentUser.name = newName;
             currentUser.email = newEmail;
+            currentUser.phone = newPhone;
             if (newPass) currentUser.password = newPass;
 
             // Sync with localStorage
