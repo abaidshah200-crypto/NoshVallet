@@ -42,6 +42,10 @@
                     <i class="fa-solid fa-gear"></i>
                     <span>Settings</span>
                 </a>
+                <a href="#" class="nav-item" id="nav-testing">
+                    <i class="fa-solid fa-flask"></i>
+                    <span>Testing</span>
+                </a>
             </nav>
             <div class="sidebar-footer">
                 <a href="#" class="nav-item logout">
@@ -289,11 +293,33 @@
                                     </div>
                                     <div class="form-group">
                                         <label>Account Email</label>
-                                        <div class="input-with-icon disabled">
+                                        <div class="input-with-icon">
                                             <i class="fa-solid fa-envelope"></i>
-                                            <input type="text" id="settings-email-display" disabled>
+                                            <input type="email" id="settings-email" placeholder="Enter your email" required>
                                         </div>
-                                        <span class="form-help">Email cannot be changed currently.</span>
+                                        <span class="form-help">Update your contact information.</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>New Password</label>
+                                        <div class="input-with-icon">
+                                            <i class="fa-solid fa-lock"></i>
+                                            <input type="password" id="settings-pass" placeholder="••••••••">
+                                            <button type="button" class="password-toggle" title="Toggle Password Visibility">
+                                                <i class="fa-solid fa-eye-slash"></i>
+                                            </button>
+                                        </div>
+                                        <span class="form-help">Leave blank to keep current.</span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Confirm Password</label>
+                                        <div class="input-with-icon">
+                                            <i class="fa-solid fa-lock"></i>
+                                            <input type="password" id="settings-pass-confirm" placeholder="••••••••">
+                                            <button type="button" class="password-toggle" title="Toggle Password Visibility">
+                                                <i class="fa-solid fa-eye-slash"></i>
+                                            </button>
+                                        </div>
+                                        <span class="form-help">Repeat your new password.</span>
                                     </div>
                                 </div>
                                 <div class="text-right mt-3">
@@ -320,8 +346,8 @@
                                 <div class="security-item">
                                     <div class="s-info">
                                         <span class="s-label">Two-Factor Authentication</span>
-                                        <span class="s-value text-success">Active Protection <i class="fa-solid fa-check-double"></i></span>
-                                        <p class="s-desc">Your account is secured with 2FA for all major transactions.</p>
+                                        <span class="s-value text-success" id="two-fa-display">Authenticator App</span>
+                                        <p class="s-desc">Enhanced security for login and large transactions.</p>
                                     </div>
                                     <button class="btn-outline-small" id="btn-configure-2fa">Configure</button>
                                 </div>
@@ -358,22 +384,6 @@
                             </div>
                         </div>
 
-                        <!-- Developer Tools Card -->
-                        <div class="widget-card settings-premium-card mt-4" style="border-left: 4px solid var(--primary-yellow);">
-                            <div class="card-section-header">
-                                <i class="fa-solid fa-code"></i>
-                                <h3>Developer Tools</h3>
-                            </div>
-                            <div class="preference-list mt-3">
-                                <div class="pref-item">
-                                    <div class="pref-info">
-                                        <span class="pref-label">Testing Data Injection</span>
-                                        <p class="pref-desc">Populate your wallet with random funds and transactions for testing flows.</p>
-                                    </div>
-                                    <button class="btn-outline-small" id="btn-inject-test-data" style="color: var(--primary-yellow-hover); border-color: var(--primary-yellow);">Inject Funds</button>
-                                </div>
-                            </div>
-                        </div>
 
                         <!-- Danger Zone Card -->
                         <div class="widget-card risk-card mt-4">
@@ -389,6 +399,37 @@
                                 <button class="btn-danger-premium" id="btn-reset-data">
                                     <i class="fa-solid fa-trash-can"></i> Reset Wallet
                                 </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Testing View -->
+            <main class="dashboard-content view-section hidden" id="view-testing">
+                <div class="page-title with-back">
+                    <button class="content-back-btn" title="Back to Dashboard"><i class="fa-solid fa-arrow-left"></i></button>
+                    <div>
+                        <h1>Developer Tools</h1>
+                        <p>Experimental features and data injection for wallet testing.</p>
+                    </div>
+                </div>
+
+                <div class="testing-page-wrapper">
+                    <div class="settings-container-centered">
+                        <div class="widget-card settings-premium-card" style="border-left: 4px solid var(--primary-yellow);">
+                            <div class="card-section-header">
+                                <i class="fa-solid fa-code"></i>
+                                <h3>Data Injection</h3>
+                            </div>
+                            <div class="preference-list mt-3">
+                                <div class="pref-item">
+                                    <div class="pref-info">
+                                        <span class="pref-label">Testing Data Injection</span>
+                                        <p class="pref-desc">Populate your wallet with random funds and transactions for testing flows.</p>
+                                    </div>
+                                    <button class="btn-outline-small" id="btn-inject-test-data" style="color: var(--primary-yellow-hover); border-color: var(--primary-yellow);">Inject Funds</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -566,14 +607,11 @@
             <div class="modal-body">
                 <form id="pay-form">
                     <div class="form-group">
-                        <label>Select Merchant</label>
-                        <select id="pay-merchant" required style="width: 100%; padding: 14px; border: 1px solid var(--gray-mid); border-radius: var(--border-radius-sm); font-family: inherit; margin-bottom: 20px;">
-                            <option value="" disabled selected>Select a merchant...</option>
-                            <option value="Daraz Shopping">Daraz Shopping</option>
-                            <option value="Foodpanda">Foodpanda</option>
-                            <option value="K-Electric">K-Electric</option>
-                            <option value="Uber / Careem">Uber / Careem</option>
-                        </select>
+                        <label>Merchant Name</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-store"></i>
+                            <input type="text" id="pay-merchant" placeholder="Enter merchant name..." required>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Amount (Rs.)</label>

@@ -131,4 +131,41 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 1500);
         });
     }
+
+    // --- Demo Account Logic ---
+    const quickLoginBtn = document.getElementById('btn-quick-login');
+    const demoEmail = 'demo@noshwallet.com';
+    const demoPassword = 'demo1234';
+
+    // Seed Demo User if not exists
+    (function seedDemoUser() {
+        const users = getUsers();
+        if (!users.some(u => u.email === demoEmail)) {
+            users.push({
+                name: 'Demo User',
+                email: demoEmail,
+                password: demoPassword,
+                walletId: 'NV-DEMO-001'
+            });
+            saveUsers(users);
+        }
+    })();
+
+    if (quickLoginBtn) {
+        quickLoginBtn.addEventListener('click', () => {
+            const emailInput = document.getElementById('login-email');
+            const passwordInput = document.getElementById('login-password');
+            
+            if (emailInput && passwordInput) {
+                emailInput.value = demoEmail;
+                passwordInput.value = demoPassword;
+                
+                showToast('Pre-filling demo credentials...', false);
+                
+                setTimeout(() => {
+                    loginForm.dispatchEvent(new Event('submit'));
+                }, 1000);
+            }
+        });
+    }
 });

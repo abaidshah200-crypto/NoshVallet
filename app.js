@@ -95,6 +95,16 @@ document.addEventListener('DOMContentLoaded', () => {
         updateUI();
     }
 
+    // --- User Data Management ---
+    function getAllUsers() {
+        const users = localStorage.getItem('noshWalletUsers');
+        return users ? JSON.parse(users) : [];
+    }
+
+    function saveAllUsers(users) {
+        localStorage.setItem('noshWalletUsers', JSON.stringify(users));
+    }
+
     // Helper to generate simple unique ID
     function generateId() {
         return Math.random().toString(36).substr(2, 9);
@@ -225,16 +235,29 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update all email displays
         document.querySelectorAll('.user-email').forEach(el => el.textContent = currentUser.email);
         
-        const emailDisplayInput = document.getElementById('settings-email-display');
-        if (emailDisplayInput) emailDisplayInput.value = currentUser.email;
+        const settingsEmailInput = document.getElementById('settings-email');
+        if (settingsEmailInput) settingsEmailInput.value = currentUser.email;
         
         const settingsNameInput = document.getElementById('settings-name');
-        if (settingsNameInput && !settingsNameInput.value) {
+        if (settingsNameInput) {
              settingsNameInput.placeholder = currentUser.name;
+             settingsNameInput.value = ''; // Clear it but keep placeholder
         }
+
+        // Reset password fields
+        const passInput = document.getElementById('settings-pass');
+        const passConfirmInput = document.getElementById('settings-pass-confirm');
+        if (passInput) passInput.value = '';
+        if (passConfirmInput) passConfirmInput.value = '';
 
         // Ensure wallet IDs are synced
         document.querySelectorAll('.wallet-id').forEach(el => el.textContent = 'ID: ' + currentUser.walletId);
+
+        // Update 2FA status
+        const twoFADisplay = document.getElementById('two-fa-display');
+        if (twoFADisplay) {
+            twoFADisplay.textContent = currentUser.twoFA || 'Authenticator App';
+        }
     }
 
     function renderNotifications() {
@@ -408,7 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     btnPay.addEventListener('click', () => {
         payInput.value = '';
-        payMerchant.selectedIndex = 0;
+        payMerchant.value = '';
         payModal.classList.add('show');
     });
 
@@ -694,17 +717,53 @@ document.addEventListener('DOMContentLoaded', () => {
         settingsForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const newName = document.getElementById('settings-name').value.trim();
-            if (newName) {
-                currentUser.name = newName;
-                sessionStorage.setItem('noshWalletAuth', JSON.stringify(currentUser));
-                
-                // Update specific elements without whole reload
-                document.querySelectorAll('.user-name').forEach(el => el.textContent = newName);
-                showToast('Profile Updated!');
-                addNotification('Profile Update', 'Your dashboard name has been updated successfully.', 'info');
-                document.getElementById('settings-name').value = '';
-                document.getElementById('settings-name').placeholder = newName;
+            const newEmail = document.getElementById('settings-email').value.trim();
+            const newPass = document.getElementById('settings-pass').value;
+            const confirmPass = document.getElementById('settings-pass-confirm').value;
+
+            if (newPass && newPass !== confirmPass) {
+                showToast('Passwords do not match!', true);
+                return;
             }
+
+            // Persistence
+            const allUsers = getAllUsers();
+            const userIndex = allUsers.findIndex(u => u.email === currentUser.email);
+
+            if (userIndex === -1) {
+                showToast('User data error!', true);
+                return;
+            }
+
+            // Check if email is changing and if it is already taken
+            if (newEmail !== currentUser.email) {
+                const emailExists = allUsers.some(u => u.email === newEmail);
+                if (emailExists) {
+                    showToast('Email already in use!', true);
+                    return;
+                }
+            }
+
+            // Update user object
+            if (newName) currentUser.name = newName;
+            currentUser.email = newEmail;
+            if (newPass) currentUser.password = newPass;
+
+            // Sync with localStorage
+            allUsers[userIndex] = currentUser;
+            saveAllUsers(allUsers);
+
+            // Sync with sessionStorage
+            sessionStorage.setItem('noshWalletAuth', JSON.stringify(currentUser));
+            
+            // Update UI
+            document.querySelectorAll('.user-name').forEach(el => el.textContent = currentUser.name);
+            document.querySelectorAll('.user-email').forEach(el => el.textContent = currentUser.email);
+            
+            showToast('Profile Updated Successfully!');
+            addNotification('Profile Update', 'Your account details have been updated.', 'success');
+            
+            updateSettingsUI();
         });
     }
 
@@ -797,6 +856,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnConfigure2FA && twoFAModal) {
         btnConfigure2FA.addEventListener('click', () => {
+            // Pre-select current method
+            const currentMethod = currentUser.twoFA || 'Authenticator App';
+            securityOptions.forEach(opt => {
+                const title = opt.querySelector('.opt-title').textContent;
+                if (title === currentMethod) {
+                    opt.classList.add('active');
+                } else {
+                    opt.classList.remove('active');
+                }
+            });
             twoFAModal.classList.add('show');
         });
 
@@ -814,7 +883,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Save changes simulation
+        // Save changes with persistence
         if (btnSave2FA) {
             btnSave2FA.addEventListener('click', () => {
                 const activeOpt = document.querySelector('.security-opt.active .opt-title').textContent;
@@ -822,11 +891,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnSave2FA.disabled = true;
 
                 setTimeout(() => {
+                    // Persistence logic
+                    currentUser.twoFA = activeOpt;
+                    sessionStorage.setItem('noshWalletAuth', JSON.stringify(currentUser));
+                    
+                    const allUsers = getAllUsers();
+                    const userIndex = allUsers.findIndex(u => u.email === currentUser.email);
+                    if (userIndex !== -1) {
+                        allUsers[userIndex] = currentUser;
+                        saveAllUsers(allUsers);
+                    }
+
                     twoFAModal.classList.remove('show');
                     showToast(`${activeOpt} enabled successfully!`);
                     
                     btnSave2FA.innerHTML = 'Save Changes';
                     btnSave2FA.disabled = false;
+                    
+                    // Update settings UI status
+                    updateSettingsUI();
                     
                     // Add notification
                     addNotification('Security Updated', `You have switched your 2FA method to ${activeOpt}.`, 'success');
