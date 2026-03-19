@@ -137,9 +137,6 @@
                                 <div class="action-icon gray"><i class="fa-solid fa-qrcode"></i></div>
                                 <span>Pay</span>
                             </button>
-                            <button class="action-btn" id="btn-transfer">
-                                <div class="action-icon yellow-light"><i class="fa-solid fa-building-columns"></i></div>
-                                <span>Transfer</span>
                             </button>
                         </div>
                     </div>
@@ -444,6 +441,118 @@
                 </div>
             </main>
 
+            <!-- Withdraw View -->
+            <main class="dashboard-content view-section hidden" id="view-withdraw">
+                <div class="page-title with-back">
+                    <button class="content-back-btn" title="Back to Dashboard"><i class="fa-solid fa-arrow-left"></i></button>
+                    <div>
+                        <h1>Withdraw Funds</h1>
+                        <p>Transfer your NoshWallet balance to your linked bank account securely.</p>
+                    </div>
+                </div>
+
+                <div class="withdraw-page-wrapper mt-4">
+                    <div class="withdraw-container-centered">
+                        <!-- Withdraw Main Card -->
+                        <div class="widget-card premium-withdraw-card glass-premium">
+                            <div class="withdraw-details-header text-center mb-4">
+                                <p class="text-sm text-muted mb-1">Total Available Balance</p>
+                                <h1 class="premium-balance-text">Rs. <span id="withdraw-page-available-balance">0.00</span></h1>
+                            </div>
+
+                            <form id="withdraw-page-form">
+                                <!-- Amount Input -->
+                                <div class="form-group">
+                                    <label class="section-label-with-icon">
+                                        <i class="fa-solid fa-money-bill-wave text-primary"></i>
+                                        Enter Withdraw Amount
+                                    </label>
+                                    <div class="amount-input-wrapper">
+                                        <span class="currency-prefix">Rs.</span>
+                                        <input type="number" id="withdraw-page-amount" placeholder="0.00" required min="1" step="0.01">
+                                        <button type="button" class="max-btn" id="btn-withdraw-page-max">Max</button>
+                                    </div>
+                                </div>
+
+                                <!-- Saved Accounts Section -->
+                                <div class="saved-accounts-section mt-5">
+                                    <div class="section-label-with-icon mb-3">
+                                        <i class="fa-solid fa-building-columns text-primary"></i>
+                                        <label>Select Withdraw Account</label>
+                                    </div>
+                                    <div id="withdraw-page-accounts-list">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                    
+                                    <button type="button" class="add-account-btn mt-3" id="btn-show-inline-add">
+                                        <i class="fa-solid fa-plus-circle"></i> Add New Bank Account
+                                    </button>
+
+                                    <!-- Inline Add Bank Popup (Initially hidden via CSS opacity/visibility) -->
+                                    <div id="inline-bank-modal" class="modal-overlay">
+                                        <div id="inline-add-bank-container" class="modal-content glass-premium p-0 border-none overflow-hidden">
+                                            <div class="inline-form-card p-30">
+                                                <div class="modal-header mb-4">
+                                                    <h2>Link New Bank Account</h2>
+                                                    <button type="button" class="close-btn" id="btn-close-inline-bank"><i class="fa-solid fa-xmark"></i></button>
+                                                </div>
+                                                <div class="form-group mb-3">
+                                                    <label>Bank Name</label>
+                                                    <select id="withdraw-page-bank-name" class="full-width-select">
+                                                        <option value="" disabled selected>Select Bank</option>
+                                                        <option value="HBL Bank">HBL Bank</option>
+                                                        <option value="Bank Alfalah">Bank Alfalah</option>
+                                                        <option value="JazzCash">JazzCash</option>
+                                                        <option value="EasyPaisa">EasyPaisa</option>
+                                                        <option value="Meezan Bank">Meezan Bank</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group mb-3">
+                                                    <label>Account Number / IBAN</label>
+                                                    <input type="text" id="withdraw-page-acc-num" placeholder="Enter Account # / IBAN" class="search-input-alt full-width p-14">
+                                                </div>
+                                                <div class="form-group mb-4">
+                                                    <label>Account Holder Name</label>
+                                                    <input type="text" id="withdraw-page-holder" placeholder="Name on account" class="search-input-alt full-width p-14">
+                                                </div>
+                                                <div class="flex-actions gap-2">
+                                                    <button type="button" class="submit-btn solid-yellow flex-1" id="btn-save-inline-bank">Link Account</button>
+                                                    <button type="button" class="btn-outline-small" id="btn-cancel-inline-bank" style="padding: 14px 20px;">Cancel</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Withdraw Summary -->
+                                <div class="withdraw-summary-card mt-5">
+                                    <h3 class="summary-title mb-4">Withdraw Summary</h3>
+                                    <div class="summary-item">
+                                        <span>Available Amount</span>
+                                        <span class="text-primary">Rs. <span id="summary-page-available-val">0.00</span></span>
+                                    </div>
+                                    <div class="summary-item">
+                                        <span>Withdraw Amount</span>
+                                        <span id="summary-page-withdraw-val">Rs. 0.00</span>
+                                    </div>
+                                    <div class="summary-item">
+                                        <span>Transaction Fee</span>
+                                        <span id="summary-page-fee-val">Rs. 0.00</span>
+                                    </div>
+                                    <div class="summary-item total">
+                                        <span>Amount to Receive</span>
+                                        <span class="text-primary">Rs. <span id="summary-page-receive-val">0.00</span></span>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="submit-btn solid-black mt-5 h-60 w-full">Confirm Withdrawal</button>
+                                <p class="helper-text mt-3 text-center">Funds will be credited to your bank within 24 hours.</p>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
         </div>
     <!-- Modals -->
 
@@ -534,47 +643,137 @@
     
     <!-- Deposit Modal -->
     <div id="deposit-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Deposit Funds</h2>
-                <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+        <div class="modal-content glass-premium p-0 border-none overflow-hidden">
+            <div class="modal-header p-20 px-30 border-none">
+                <h2 id="deposit-modal-title" class="flex-1 text-center">Deposit Funds</h2>
+                <button type="button" class="close-btn" id="btn-close-deposit"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="modal-body">
-                <form id="deposit-form">
-                    <div class="form-group">
-                        <label>Amount (Rs.)</label>
-                        <input type="number" id="deposit-amount" placeholder="Enter amount..." required min="1" step="0.01">
+            
+            <div class="modal-body p-30 pt-0">
+                <!-- Step 1: Amount Entry -->
+                <div id="deposit-step-1" class="deposit-step">
+                    <form id="deposit-form">
+                        <div class="form-group mb-4">
+                            <label class="mb-2 block">Enter Amount (Rs.)</label>
+                            <div class="input-with-icon large">
+                                <i class="fa-solid fa-money-bill-wave"></i>
+                                <input type="number" id="deposit-amount" placeholder="0.00" required min="100" step="100">
+                            </div>
+                        </div>
+                        <div class="quick-amounts mb-4">
+                            <button type="button" class="quick-btn" data-amount="500">+500</button>
+                            <button type="button" class="quick-btn" data-amount="1000">+1000</button>
+                            <button type="button" class="quick-btn" data-amount="5000">+5000</button>
+                        </div>
+                        <button type="button" id="btn-deposit-next-1" class="submit-btn solid-yellow">Continue to Bank Selection</button>
+                    </form>
+                </div>
+
+                <!-- Step 2: Bank Selection -->
+                <div id="deposit-step-2" class="deposit-step hidden">
+                    <p class="text-sm text-muted mb-4 text-center">Select your bank for secure top-up</p>
+                    <div class="bank-list-grid mb-4">
+                        <div class="bank-item" data-bank="HBL Bank">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>HBL Bank</span>
+                        </div>
+                        <div class="bank-item" data-bank="Meezan Bank">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>Meezan Bank</span>
+                        </div>
+                        <div class="bank-item" data-bank="Bank Alfalah">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>Bank Alfalah</span>
+                        </div>
+                        <div class="bank-item" data-bank="UBL Bank">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>UBL Bank</span>
+                        </div>
+                        <div class="bank-item" data-bank="MCB Bank">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>MCB Bank</span>
+                        </div>
+                        <div class="bank-item" data-bank="Allied Bank">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>Allied Bank</span>
+                        </div>
+                        <div class="bank-item" data-bank="Standard Chartered">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>SCB Bank</span>
+                        </div>
+                        <div class="bank-item" data-bank="Bank Al Habib">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>Bank Al Habib</span>
+                        </div>
+                        <div class="bank-item" data-bank="JazzCash">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                            <span>JazzCash</span>
+                        </div>
+                        <div class="bank-item" data-bank="EasyPaisa">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                            <span>EasyPaisa</span>
+                        </div>
+                        <div class="bank-item" data-bank="SadaPay">
+                            <i class="fa-solid fa-credit-card"></i>
+                            <span>SadaPay</span>
+                        </div>
+                        <div class="bank-item" data-bank="NayaPay">
+                            <i class="fa-solid fa-credit-card"></i>
+                            <span>NayaPay</span>
+                        </div>
                     </div>
-                    <div class="quick-amounts">
-                        <button type="button" class="quick-btn" data-amount="500">+500</button>
-                        <button type="button" class="quick-btn" data-amount="1000">+1000</button>
-                        <button type="button" class="quick-btn" data-amount="5000">+5000</button>
+                    <div class="flex-row gap-15 mt-4">
+                        <button type="button" id="btn-deposit-back-2" class="submit-btn outline flex-1">Back</button>
+                        <button type="button" id="btn-deposit-next-2" class="submit-btn solid-yellow flex-1" disabled>Proceed to Verify</button>
                     </div>
-                    <button type="submit" class="submit-btn solid-yellow">Proceed to Deposit</button>
-                </form>
+                </div>
+
+                <!-- Step 3: OTP Verification -->
+                <div id="deposit-step-3" class="deposit-step hidden">
+                    <div class="text-center mb-4">
+                        <div class="icon-circle mb-3 mx-auto"><i class="fa-solid fa-shield-halved"></i></div>
+                        <h3>Verify OTP</h3>
+                        <p class="text-sm text-muted">Enter 6-digit code sent to your bank-linked mobile number</p>
+                    </div>
+                    <div class="otp-input-container mb-4">
+                        <input type="text" maxlength="1" class="otp-box" autofocus>
+                        <input type="text" maxlength="1" class="otp-box">
+                        <input type="text" maxlength="1" class="otp-box">
+                        <input type="text" maxlength="1" class="otp-box">
+                        <input type="text" maxlength="1" class="otp-box">
+                        <input type="text" maxlength="1" class="otp-box">
+                    </div>
+                    <div class="flex-row gap-15 mt-4">
+                        <button type="button" id="btn-deposit-back-3" class="submit-btn outline flex-1">Back</button>
+                        <button type="button" id="btn-deposit-verify" class="submit-btn solid-yellow flex-1">Verify & Deposit</button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Processing & Success -->
+                <div id="deposit-step-4" class="deposit-step hidden">
+                    <div class="processing-state text-center p-30">
+                        <div class="loading-spinner mb-4"></div>
+                        <h3>Connecting to Bank...</h3>
+                        <p class="text-sm text-muted">Verifying your transaction with secure servers</p>
+                    </div>
+                    <div class="success-state text-center p-30 hidden">
+                        <div class="success-amount-display mb-4">
+                            <span class="currency">Rs.</span>
+                            <span id="final-deposit-amount" class="amount">0.00</span>
+                        </div>
+                        <h2 class="text-success">Deposit Successful!</h2>
+                        <p class="text-muted mb-4">Funds have been added to your wallet</p>
+                        <button type="button" id="btn-deposit-finish" class="submit-btn solid-black">Back to Dashboard</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Withdraw Modal -->
-    <div id="withdraw-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Withdraw Funds</h2>
-                <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body">
-                <form id="withdraw-form">
-                    <div class="form-group">
-                        <label>Amount (Rs.)</label>
-                        <input type="number" id="withdraw-amount" placeholder="Enter amount..." required min="1" step="0.01">
-                    </div>
-                    <p class="helper-text">Withdrawals are transferred directly to your linked bank account within 24 hours.</p>
-                    <button type="submit" class="submit-btn solid-black">Confirm Withdrawal</button>
-                </form>
-            </div>
-        </div>
-    </div>
+    <!-- Improved Withdraw Modal -->
+
+
+
     
     <!-- Send Money Modal -->
     <div id="send-modal" class="modal">
@@ -629,44 +828,6 @@
                         </div>
                     </div>
                     <button type="submit" class="submit-btn solid-yellow">Pay Merchant</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- External Transfer Modal -->
-    <div id="transfer-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>External Transfer</h2>
-                <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body">
-                <form id="transfer-form">
-                    <div class="form-group">
-                        <label>Transfer Method</label>
-                        <select id="transfer-method" required style="width: 100%; padding: 14px; border: 1px solid var(--gray-mid); border-radius: var(--border-radius-sm); font-family: inherit; margin-bottom: 20px;">
-                            <option value="" disabled selected>Select method...</option>
-                            <option value="Bank Account">Bank Account</option>
-                            <option value="JazzCash">JazzCash</option>
-                            <option value="EasyPaisa">EasyPaisa</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label id="transfer-label">Account / Mobile Number</label>
-                        <div class="input-with-icon">
-                            <i class="fa-solid fa-hashtag"></i>
-                            <input type="text" id="transfer-account" placeholder="Enter account or phone..." required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Amount (Rs.)</label>
-                        <div class="input-with-icon">
-                            <i class="fa-solid fa-money-bill-transfer"></i>
-                            <input type="number" id="transfer-amount" placeholder="0.00" required min="1" step="0.01">
-                        </div>
-                    </div>
-                    <button type="submit" class="submit-btn solid-black">Transfer Funds</button>
                 </form>
             </div>
         </div>

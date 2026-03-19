@@ -47,7 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let state = {
         balance: 0.00,
         transactions: [],
-        notifications: []
+        notifications: [],
+        savedAccounts: []
     };
 
     // Load state from localStorage on startup
@@ -57,29 +58,32 @@ document.addEventListener('DOMContentLoaded', () => {
             state = JSON.parse(savedState);
             // Ensure notifications exist in old states
             if (!state.notifications) state.notifications = [];
+            if (!state.savedAccounts) state.savedAccounts = [];
         } else { // Seed some dummy data for first time view
-            state.balance = 1500.50;
+            state.balance = 2299.00;
             state.transactions = [
                 {
                     id: generateId(),
                     type: 'deposit',
-                    title: 'Added via Card',
+                    title: 'Initial Wallet Top-up',
                     date: new Date(Date.now() - 86400000).toISOString(),
-                    amount: 2000.00
-                },
+                    amount: 2299.00
+                }
+            ];
+            state.savedAccounts = [
                 {
                     id: generateId(),
-                    type: 'withdraw',
-                    title: 'Payment to Daraz',
-                    date: new Date(Date.now() - 43200000).toISOString(),
-                    amount: 499.50
+                    bankName: 'HBL Bank',
+                    accountNum: '0349****422',
+                    holderName: 'User Account',
+                    isDefault: true
                 }
             ];
             state.notifications = [
                 {
                     id: generateId(),
                     title: 'Welcome to NoshWallet!',
-                    message: 'Thanks for joining. Explore your new premium wallet.',
+                    message: 'Thanks for joining. Your balance is PKR 2,299.00',
                     date: new Date().toISOString(),
                     type: 'info',
                     unread: true
@@ -165,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderFullTransactions();
         renderAnalytics();
         updateSettingsUI();
+        // renderSavedAccounts(); // Removed obsolete call
     }
 
     function renderFullTransactions() {
@@ -359,24 +364,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Modals
     const depositModal = document.getElementById('deposit-modal');
-    const withdrawModal = document.getElementById('withdraw-modal');
     const sendModal = document.getElementById('send-modal');
     const payModal = document.getElementById('pay-modal');
-    const transferModal = document.getElementById('transfer-modal');
+    
     
     // Buttons
     const btnDeposit = document.getElementById('btn-deposit');
     const btnWithdraw = document.getElementById('btn-withdraw');
     const btnSend = document.getElementById('btn-send');
     const btnPay = document.getElementById('btn-pay');
-    const btnTransfer = document.getElementById('btn-transfer');
     const closeBtns = document.querySelectorAll('.close-btn');
-
     // Forms
     const depositForm = document.getElementById('deposit-form');
     const depositInput = document.getElementById('deposit-amount');
-    const withdrawForm = document.getElementById('withdraw-form');
-    const withdrawInput = document.getElementById('withdraw-amount');
     const sendForm = document.getElementById('send-form');
     const sendInput = document.getElementById('send-amount');
     const sendRecipient = document.getElementById('send-recipient');
@@ -384,62 +384,222 @@ document.addEventListener('DOMContentLoaded', () => {
     const payInput = document.getElementById('pay-amount');
     const payMerchant = document.getElementById('pay-merchant');
     
-    const transferForm = document.getElementById('transfer-form');
-    const transferMethod = document.getElementById('transfer-method');
-    const transferAccount = document.getElementById('transfer-account');
-    const transferAmount = document.getElementById('transfer-amount');
-    const transferLabel = document.getElementById('transfer-label');
-    
     // Quick Amounts
     const quickBtns = document.querySelectorAll('.quick-btn');
 
     // Open Modals
-    if (btnTransfer) {
-        btnTransfer.addEventListener('click', () => {
-            transferAccount.value = '';
-            transferAmount.value = '';
-            transferMethod.selectedIndex = 0;
-            transferModal.classList.add('show');
+    if (btnDeposit) {
+        btnDeposit.addEventListener('click', () => {
+            depositInput.value = '';
+            depositModal.classList.add('show');
         });
     }
 
-    if (transferMethod) {
-        transferMethod.addEventListener('change', (e) => {
-            const method = e.target.value;
-            if (method === 'Bank Account') {
-                transferLabel.textContent = 'Bank Account Number / IBAN';
-                transferAccount.placeholder = 'Enter IBAN or Account #';
+    if (btnWithdraw) {
+        btnWithdraw.addEventListener('click', () => {
+            showView('withdraw');
+        });
+    }
+
+    if (btnSend) {
+        btnSend.addEventListener('click', () => {
+            sendInput.value = '';
+            sendRecipient.value = '';
+            sendModal.classList.add('show');
+        });
+    }
+
+    if (btnPay) {
+        btnPay.addEventListener('click', () => {
+            payInput.value = '';
+            payMerchant.value = '';
+            payModal.classList.add('show');
+        });
+    }
+
+    // --- Withdrawal Logic (Page View) ---
+    function renderWithdrawPage() {
+        const balanceDisplay = document.getElementById('withdraw-page-available-balance');
+        const summaryAvailable = document.getElementById('summary-page-available-val');
+        const accountsList = document.getElementById('withdraw-page-accounts-list');
+        
+        if (balanceDisplay) balanceDisplay.textContent = formatCurrency(state.balance);
+        if (summaryAvailable) summaryAvailable.textContent = formatCurrency(state.balance);
+        
+        if (accountsList) {
+            accountsList.innerHTML = '';
+            if (state.savedAccounts.length === 0) {
+                accountsList.innerHTML = '<p class="text-sm text-muted p-3 border-dashed text-center">No bank accounts linked yet.</p>';
             } else {
-                transferLabel.textContent = `${method} Mobile Number`;
-                transferAccount.placeholder = 'e.g. 0300 1234567';
+                state.savedAccounts.forEach(acc => {
+                    const card = document.createElement('div');
+                    card.className = `saved-account-card ${acc.isDefault ? 'active' : ''}`;
+                    card.innerHTML = `
+                        <div class="account-icon">
+                            <i class="fa-solid fa-building-columns"></i>
+                        </div>
+                        <div class="account-info">
+                            <span class="account-name">${acc.bankName}</span>
+                            <span class="account-number">${acc.accountNum}</span>
+                            <div class="account-fee-tag"><i class="fa-solid fa-tags"></i> 1% Fee</div>
+                        </div>
+                        <div class="account-selector"></div>
+                    `;
+                    card.onclick = () => {
+                        document.querySelectorAll('.saved-account-card').forEach(c => c.classList.remove('active'));
+                        card.classList.add('active');
+                    };
+                    accountsList.appendChild(card);
+                });
+            }
+        }
+        updateWithdrawPageSummary();
+    }
+
+    function updateWithdrawPageSummary() {
+        const amountInput = document.getElementById('withdraw-page-amount');
+        const withdrawVal = document.getElementById('summary-page-withdraw-val');
+        const feeVal = document.getElementById('summary-page-fee-val');
+        const receiveVal = document.getElementById('summary-page-receive-val');
+
+        if (!amountInput) return;
+
+        const amount = parseFloat(amountInput.value) || 0;
+        const fee = amount * 0.01; // 1% fee
+        const finalAmount = Math.max(0, amount - fee);
+
+        if (withdrawVal) withdrawVal.textContent = `Rs. ${formatCurrency(amount)}`;
+        if (feeVal) feeVal.textContent = `Rs. ${formatCurrency(fee)}`;
+        if (receiveVal) receiveVal.textContent = formatCurrency(finalAmount);
+    }
+
+    // Withdrawal View Event Listeners
+    const btnWithdrawPageMax = document.getElementById('btn-withdraw-page-max');
+    const withdrawPageAmountInput = document.getElementById('withdraw-page-amount');
+    const withdrawPageForm = document.getElementById('withdraw-page-form');
+    const btnShowInlineAdd = document.getElementById('btn-show-inline-add');
+    const inlineBankModal = document.getElementById('inline-bank-modal');
+    const btnCloseInlineBank = document.getElementById('btn-close-inline-bank');
+    const btnCancelInlineBank = document.getElementById('btn-cancel-inline-bank');
+    const btnSaveInlineBank = document.getElementById('btn-save-inline-bank');
+
+    if (btnWithdrawPageMax) {
+        btnWithdrawPageMax.addEventListener('click', () => {
+            if (withdrawPageAmountInput) {
+                withdrawPageAmountInput.value = state.balance;
+                updateWithdrawPageSummary();
             }
         });
     }
 
-    btnDeposit.addEventListener('click', () => {
-        depositInput.value = '';
-        depositModal.classList.add('show');
-    });
+    if (withdrawPageAmountInput) {
+        withdrawPageAmountInput.addEventListener('input', updateWithdrawPageSummary);
+    }
 
-    btnWithdraw.addEventListener('click', () => {
-        withdrawInput.value = '';
-        withdrawModal.classList.add('show');
-    });
+    if (btnShowInlineAdd) {
+        btnShowInlineAdd.addEventListener('click', () => {
+            if (inlineBankModal) {
+                inlineBankModal.classList.add('show');
+            }
+        });
+    }
 
-    btnSend.addEventListener('click', () => {
-        sendInput.value = '';
-        sendRecipient.value = '';
-        sendModal.classList.add('show');
-    });
+    if (btnCloseInlineBank) {
+        btnCloseInlineBank.addEventListener('click', () => {
+            if (inlineBankModal) {
+                inlineBankModal.classList.remove('show');
+            }
+        });
+    }
 
-    btnPay.addEventListener('click', () => {
-        payInput.value = '';
-        payMerchant.value = '';
-        payModal.classList.add('show');
-    });
+    if (btnCancelInlineBank) {
+        btnCancelInlineBank.addEventListener('click', () => {
+            if (inlineBankModal) {
+                inlineBankModal.classList.remove('show');
+            }
+        });
+    }
+
+    // Close on click outside
+    if (inlineBankModal) {
+        inlineBankModal.addEventListener('click', (e) => {
+            if (e.target === inlineBankModal) {
+                inlineBankModal.classList.remove('show');
+            }
+        });
+    }
+
+    if (btnSaveInlineBank) {
+        btnSaveInlineBank.addEventListener('click', () => {
+            const bankName = document.getElementById('withdraw-page-bank-name').value;
+            const accountNum = document.getElementById('withdraw-page-acc-num').value;
+            const holderName = document.getElementById('withdraw-page-holder').value;
+
+            if (bankName && accountNum && holderName) {
+                const newAccount = {
+                    id: generateId(),
+                    bankName,
+                    accountNum,
+                    holderName,
+                    isDefault: state.savedAccounts.length === 0
+                };
+                state.savedAccounts.push(newAccount);
+                saveState();
+                if (inlineBankModal) {
+                    inlineBankModal.classList.remove('show');
+                }
+                showToast('Bank Account Linked!');
+                renderWithdrawPage();
+            } else {
+                showToast('Please fill all bank details!', true);
+            }
+        });
+    }
+
+    if (withdrawPageForm) {
+        withdrawPageForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const amount = parseFloat(withdrawPageAmountInput.value);
+            const activeAccount = document.querySelector('#withdraw-page-accounts-list .saved-account-card.active');
+
+            if (!activeAccount) {
+                showToast('Please select a bank account!', true);
+                return;
+            }
+
+            if (amount > state.balance) {
+                showToast('Insufficient balance!', true);
+                return;
+            }
+
+            if (amount <= 0) {
+                showToast('Invalid withdraw amount!', true);
+                return;
+            }
+
+            const fee = amount * 0.01;
+            const bankName = activeAccount.querySelector('.account-name').textContent;
+
+            // Process Withdrawal
+            state.balance -= amount;
+            state.transactions.unshift({
+                id: generateId(),
+                type: 'withdraw',
+                title: `Withdraw to ${bankName}`,
+                date: new Date().toISOString(),
+                amount: amount
+            });
+
+            addNotification('Withdrawal Successful', `Rs. ${formatCurrency(amount - fee)} has been sent to your bank account.`, 'success');
+            saveState();
+            showToast('Withdrawal Processed!');
+            showView('dashboard');
+        });
+    }
 
     // Close Modals
-    closeBtns.forEach(btn => {
+    if (closeBtns) {
+        closeBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             const modal = e.target.closest('.modal');
             if (modal) {
@@ -451,6 +611,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+}
 
     // Close when clicking outside content
     window.addEventListener('click', (e) => {
@@ -468,107 +629,148 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Handle Forms
-    depositForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const amount = parseFloat(depositInput.value);
-        if (amount > 0) {
-            state.balance += amount;
-            state.transactions.unshift({
-                id: generateId(),
-                type: 'deposit',
-                title: 'Top-up via Bank/Card',
-                date: new Date().toISOString(),
-                amount: amount
-            });
-            saveState();
+    // --- Realistic Multi-step Deposit Logic ---
+    let selectedBank = null;
+
+    function showDepositStep(stepNumber) {
+        document.querySelectorAll('.deposit-step').forEach(step => step.classList.add('hidden'));
+        const targetStep = document.getElementById(`deposit-step-${stepNumber}`);
+        if (targetStep) targetStep.classList.remove('hidden');
+
+        // Update modal title
+        const titleEl = document.getElementById('deposit-modal-title');
+        if (titleEl) {
+            if (stepNumber === 1) titleEl.textContent = 'Deposit Funds';
+            if (stepNumber === 2) titleEl.textContent = 'Select Bank';
+            if (stepNumber === 3) titleEl.textContent = 'Verify Transaction';
+            if (stepNumber === 4) titleEl.textContent = 'Processing Payment';
+        }
+    }
+
+    // Step 1 -> 2
+    const btnDepositNext1 = document.getElementById('btn-deposit-next-1');
+    if (btnDepositNext1) {
+        btnDepositNext1.addEventListener('click', () => {
+            const amount = parseFloat(depositInput.value);
+            if (amount >= 100) {
+                showDepositStep(2);
+            } else {
+                showToast('Minimum deposit is Rs. 100', true);
+            }
+        });
+    }
+
+    // Bank Selection (Step 2)
+    const bankItems = document.querySelectorAll('.bank-item');
+    const btnDepositNext2 = document.getElementById('btn-deposit-next-2');
+    bankItems.forEach(item => {
+        item.addEventListener('click', () => {
+            bankItems.forEach(b => b.classList.remove('active'));
+            item.classList.add('active');
+            selectedBank = item.dataset.bank;
+            if (btnDepositNext2) btnDepositNext2.disabled = false;
+        });
+    });
+
+    if (btnDepositNext2) {
+        btnDepositNext2.addEventListener('click', () => showDepositStep(3));
+    }
+
+    const btnDepositBack2 = document.getElementById('btn-deposit-back-2');
+    if (btnDepositBack2) {
+        btnDepositBack2.addEventListener('click', () => showDepositStep(1));
+    }
+
+    // OTP Logic (Step 3)
+    const otpBoxes = document.querySelectorAll('.otp-box');
+    otpBoxes.forEach((box, idx) => {
+        box.addEventListener('input', (e) => {
+            if (e.target.value.length === 1 && idx < otpBoxes.length - 1) {
+                otpBoxes[idx + 1].focus();
+            }
+        });
+        box.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !e.target.value && idx > 0) {
+                otpBoxes[idx - 1].focus();
+            }
+        });
+    });
+
+    const btnDepositVerify = document.getElementById('btn-deposit-verify');
+    const btnDepositBack3 = document.getElementById('btn-deposit-back-3');
+    if (btnDepositBack3) {
+        btnDepositBack3.addEventListener('click', () => showDepositStep(2));
+    }
+
+
+    if (btnDepositVerify) {
+        btnDepositVerify.addEventListener('click', () => {
+            const isOtpFilled = Array.from(otpBoxes).every(box => box.value.length === 1);
+            if (!isOtpFilled) {
+                showToast('Please enter 6-digit OTP', true);
+                return;
+            }
+
+            showDepositStep(4);
+            const amount = parseFloat(depositInput.value);
+            
+            // Simulation delay
+            setTimeout(() => {
+                const processingState = document.querySelector('.processing-state');
+                const successState = document.querySelector('.success-state');
+                if (processingState) processingState.classList.add('hidden');
+                if (successState) successState.classList.remove('hidden');
+                
+                const finalAmountEl = document.getElementById('final-deposit-amount');
+                if (finalAmountEl) finalAmountEl.textContent = formatCurrency(amount);
+
+                // Update Balance
+                state.balance += amount;
+                state.transactions.unshift({
+                    id: generateId(),
+                    type: 'deposit',
+                    title: `Deposit via ${selectedBank}`,
+                    date: new Date().toISOString(),
+                    amount: amount
+                });
+                saveState();
+                addNotification('Deposit Successful', `Rs. ${formatCurrency(amount)} from ${selectedBank} added.`, 'success');
+            }, 2500);
+        });
+    }
+
+    const btnDepositFinish = document.getElementById('btn-deposit-finish');
+    if (btnDepositFinish) {
+        btnDepositFinish.addEventListener('click', () => {
             depositModal.classList.remove('show');
-            showToast('Deposit Successful!');
-            addNotification('Deposit Successful', `Rs. ${formatCurrency(amount)} has been added to your wallet.`, 'success');
-        }
-    });
+            // Reset modal for next time
+            setTimeout(() => {
+                showDepositStep(1);
+                depositInput.value = '';
+                bankItems.forEach(b => b.classList.remove('active'));
+                if (btnDepositNext2) btnDepositNext2.disabled = true;
+                otpBoxes.forEach(box => box.value = '');
+                const processingState = document.querySelector('.processing-state');
+                const successState = document.querySelector('.success-state');
+                if (processingState) processingState.classList.remove('hidden');
+                if (successState) successState.classList.add('hidden');
+            }, 500);
+        });
+    }
 
-    withdrawForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const amount = parseFloat(withdrawInput.value);
-        if (amount > 0) {
-            if (amount > state.balance) {
-                showToast('Insufficient Balance!', true);
-            } else {
-                state.balance -= amount;
-                state.transactions.unshift({
-                    id: generateId(),
-                    type: 'withdraw',
-                    title: 'Withdraw to Linked Bank',
-                    date: new Date().toISOString(),
-                    amount: amount
-                });
-                saveState();
-                withdrawModal.classList.remove('show');
-                showToast('Withdrawal Processed!');
-                addNotification('Withdrawal Processed', `Rs. ${formatCurrency(amount)} has been withdrawn to your bank.`, 'info');
-            }
-        }
-    });
+    if (depositForm) {
+        depositForm.addEventListener('submit', (e) => e.preventDefault());
+    }
 
-    sendForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const amount = parseFloat(sendInput.value);
-        const recipient = sendRecipient.value.trim();
-        
-        if (amount > 0 && recipient) {
-            if (amount > state.balance) {
-                showToast('Insufficient Balance!', true);
-            } else {
-                state.balance -= amount;
-                state.transactions.unshift({
-                    id: generateId(),
-                    type: 'withdraw',
-                    title: `Sent to ${recipient}`,
-                    date: new Date().toISOString(),
-                    amount: amount
-                });
-                saveState();
-                sendModal.classList.remove('show');
-                showToast(`Rs. ${formatCurrency(amount)} Sent Successfully!`);
-                addNotification('Money Sent', `Successfully sent Rs. ${formatCurrency(amount)} to ${recipient}.`, 'success');
-            }
-        }
-    });
 
-    payForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const amount = parseFloat(payInput.value);
-        const merchant = payMerchant.value;
-        
-        if (amount > 0 && merchant) {
-            if (amount > state.balance) {
-                showToast('Insufficient Balance!', true);
-            } else {
-                state.balance -= amount;
-                state.transactions.unshift({
-                    id: generateId(),
-                    type: 'withdraw',
-                    title: `Payment: ${merchant}`,
-                    date: new Date().toISOString(),
-                    amount: amount
-                });
-                saveState();
-                payModal.classList.remove('show');
-                showToast(`Payment of Rs. ${formatCurrency(amount)} Done!`);
-                addNotification('Payment Successful', `Paid Rs. ${formatCurrency(amount)} to ${merchant}.`, 'success');
-            }
-        }
-    });
 
-    if (transferForm) {
-        transferForm.addEventListener('submit', (e) => {
+    if (sendForm) {
+        sendForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const amount = parseFloat(transferAmount.value);
-            const method = transferMethod.value;
-            const account = transferAccount.value.trim();
-
-            if (amount > 0 && method && account) {
+            const amount = parseFloat(sendInput.value);
+            const recipient = sendRecipient.value.trim();
+            
+            if (amount > 0 && recipient) {
                 if (amount > state.balance) {
                     showToast('Insufficient Balance!', true);
                 } else {
@@ -576,14 +778,41 @@ document.addEventListener('DOMContentLoaded', () => {
                     state.transactions.unshift({
                         id: generateId(),
                         type: 'withdraw',
-                        title: `Transfer to ${method} (${account})`,
+                        title: `Sent to ${recipient}`,
                         date: new Date().toISOString(),
                         amount: amount
                     });
                     saveState();
-                    transferModal.classList.remove('show');
-                    showToast(`Transfer to ${method} Successful!`);
-                    addNotification('External Transfer', `Rs. ${formatCurrency(amount)} sent to ${method} (${account}).`, 'success');
+                    sendModal.classList.remove('show');
+                    showToast(`Rs. ${formatCurrency(amount)} Sent Successfully!`);
+                    addNotification('Money Sent', `Successfully sent Rs. ${formatCurrency(amount)} to ${recipient}.`, 'success');
+                }
+            }
+        });
+    }
+
+    if (payForm) {
+        payForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const amount = parseFloat(payInput.value);
+            const merchant = payMerchant.value;
+            
+            if (amount > 0 && merchant) {
+                if (amount > state.balance) {
+                    showToast('Insufficient Balance!', true);
+                } else {
+                    state.balance -= amount;
+                    state.transactions.unshift({
+                        id: generateId(),
+                        type: 'withdraw',
+                        title: `Payment: ${merchant}`,
+                        date: new Date().toISOString(),
+                        amount: amount
+                    });
+                    saveState();
+                    payModal.classList.remove('show');
+                    showToast(`Payment of Rs. ${formatCurrency(amount)} Done!`);
+                    addNotification('Payment Successful', `Paid Rs. ${formatCurrency(amount)} to ${merchant}.`, 'success');
                 }
             }
         });
@@ -667,6 +896,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Refresh dynamic content
         if (viewId === 'transactions') renderFullTransactions();
         if (viewId === 'analytics') renderAnalytics();
+        if (viewId === 'withdraw') renderWithdrawPage();
     }
 
     contentBackBtns.forEach(btn => {
