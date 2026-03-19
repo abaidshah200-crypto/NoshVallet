@@ -632,18 +632,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Realistic Multi-step Deposit Logic ---
     let selectedBank = null;
 
-    function showDepositStep(stepNumber) {
+    function showDepositStep(stepId) {
         document.querySelectorAll('.deposit-step').forEach(step => step.classList.add('hidden'));
-        const targetStep = document.getElementById(`deposit-step-${stepNumber}`);
+        
+        const targetId = (typeof stepId === 'string' && stepId.startsWith('deposit-step-')) 
+            ? stepId 
+            : `deposit-step-${stepId}`;
+        
+        const targetStep = document.getElementById(targetId);
         if (targetStep) targetStep.classList.remove('hidden');
 
         // Update modal title
         const titleEl = document.getElementById('deposit-modal-title');
         if (titleEl) {
-            if (stepNumber === 1) titleEl.textContent = 'Deposit Funds';
-            if (stepNumber === 2) titleEl.textContent = 'Select Bank';
-            if (stepNumber === 3) titleEl.textContent = 'Verify Transaction';
-            if (stepNumber === 4) titleEl.textContent = 'Processing Payment';
+            if (stepId === 1) titleEl.textContent = 'Deposit Funds';
+            if (stepId === 2) titleEl.textContent = 'Select Payment Method';
+            if (stepId === 'bank') titleEl.textContent = 'Select Bank';
+            if (stepId === 'card') titleEl.textContent = 'Card Details';
+            if (stepId === 'p2p') titleEl.textContent = 'P2P Request';
+            if (stepId === 3) titleEl.textContent = 'Verify Transaction';
+            if (stepId === 4) titleEl.textContent = 'Processing Payment';
         }
     }
 
@@ -655,30 +663,73 @@ document.addEventListener('DOMContentLoaded', () => {
             if (amount >= 100) {
                 showDepositStep(2);
             } else {
+                markInvalid(depositInput);
                 showToast('Minimum deposit is Rs. 100', true);
             }
         });
     }
 
-    // Bank Selection (Step 2)
+    // Method Selection (Step 2)
+    const methodTiles = document.querySelectorAll('.method-tile');
+    methodTiles.forEach(tile => {
+        tile.addEventListener('click', () => {
+            const method = tile.dataset.method;
+            if (method === 'card') {
+                selectedBank = 'Debit Card';
+                showDepositStep('card');
+            } else if (method === 'bank') {
+                showDepositStep('bank');
+            } else if (method === 'p2p') {
+                selectedBank = 'P2P Transfer';
+                showDepositStep('p2p');
+            }
+        });
+    });
+
+    const btnMethodBack = document.getElementById('btn-method-back');
+    if (btnMethodBack) {
+        btnMethodBack.addEventListener('click', () => showDepositStep(1));
+    }
+
+    // Bank Selection Sub-step
     const bankItems = document.querySelectorAll('.bank-item');
-    const btnDepositNext2 = document.getElementById('btn-deposit-next-2');
+    const btnBankNext = document.getElementById('btn-bank-next');
+    const btnBankBack = document.getElementById('btn-bank-back');
+
     bankItems.forEach(item => {
         item.addEventListener('click', () => {
             bankItems.forEach(b => b.classList.remove('active'));
             item.classList.add('active');
             selectedBank = item.dataset.bank;
-            if (btnDepositNext2) btnDepositNext2.disabled = false;
+            if (btnBankNext) btnBankNext.disabled = false;
         });
     });
 
-    if (btnDepositNext2) {
-        btnDepositNext2.addEventListener('click', () => showDepositStep(3));
+    if (btnBankNext) {
+        btnBankNext.addEventListener('click', () => showDepositStep(3));
+    }
+    if (btnBankBack) {
+        btnBankBack.addEventListener('click', () => showDepositStep(2));
     }
 
-    const btnDepositBack2 = document.getElementById('btn-deposit-back-2');
-    if (btnDepositBack2) {
-        btnDepositBack2.addEventListener('click', () => showDepositStep(1));
+    // P2P Sub-step
+    const btnP2PNext = document.getElementById('btn-p2p-next');
+    const btnP2PBack = document.getElementById('btn-p2p-back');
+    const p2pSenderInput = document.getElementById('p2p-sender-id');
+
+    if (btnP2PNext) {
+        btnP2PNext.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!p2pSenderInput.value) {
+                markInvalid(p2pSenderInput);
+                showToast('Please enter Sender ID', true);
+                return;
+            }
+            triggerProcessingFlow();
+        });
+    }
+    if (btnP2PBack) {
+        btnP2PBack.addEventListener('click', () => showDepositStep(2));
     }
 
     // OTP Logic (Step 3)
@@ -696,12 +747,115 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    const btnDepositVerify = document.getElementById('btn-deposit-verify');
-    const btnDepositBack3 = document.getElementById('btn-deposit-back-3');
-    if (btnDepositBack3) {
-        btnDepositBack3.addEventListener('click', () => showDepositStep(2));
+    // Card Details Logic (Step 2.5)
+    const cardNumInput = document.getElementById('card-number-input');
+    const cardExpInput = document.getElementById('card-expiry-input');
+    const cardCvvInput = document.getElementById('card-cvv-input');
+    const cardNameInput = document.getElementById('card-name-input');
+    const previewNum = document.getElementById('preview-number');
+    const previewExp = document.getElementById('preview-expiry');
+    const previewName = document.getElementById('preview-name');
+    const btnCardNext = document.getElementById('btn-card-next');
+    const btnCardBack = document.getElementById('btn-card-back');
+
+    if (cardNumInput) {
+        cardNumInput.addEventListener('input', (e) => {
+            // Masking
+            let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+            let formatted = value.match(/.{1,4}/g)?.join(' ') || '';
+            e.target.value = formatted;
+            previewNum.textContent = formatted || '#### #### #### ####';
+            
+            // Detection
+            const previewLogo = document.getElementById('preview-logo');
+            if (value.startsWith('4')) previewLogo.innerHTML = '<i class="fa-brands fa-cc-visa"></i>';
+            else if (value.startsWith('5')) previewLogo.innerHTML = '<i class="fa-brands fa-cc-mastercard"></i>';
+            else previewLogo.innerHTML = '<i class="fa-solid fa-credit-card"></i>';
+        });
     }
 
+    if (cardExpInput) {
+        cardExpInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\//g, '').replace(/[^0-9]/gi, '');
+            if (value.length > 2) value = value.substring(0, 2) + '/' + value.substring(2, 4);
+            e.target.value = value;
+            previewExp.textContent = value || 'MM/YY';
+        });
+    }
+
+    if (cardNameInput) {
+        cardNameInput.addEventListener('input', (e) => {
+            previewName.textContent = e.target.value.toUpperCase() || 'FULL NAME';
+        });
+    }
+
+    if (btnCardBack) {
+        btnCardBack.addEventListener('click', () => showDepositStep(2));
+    }
+
+    if (btnCardNext) {
+        btnCardNext.addEventListener('click', () => {
+            const rawCardNum = cardNumInput.value.replace(/\s+/g, '');
+            if (rawCardNum.length < 13) {
+                markInvalid(cardNumInput);
+                showToast('Card number is too short', true);
+                return;
+            }
+            if (cardExpInput.value.length < 5) {
+                markInvalid(cardExpInput);
+                showToast('Please enter expiry (MM/YY)', true);
+                return;
+            }
+            if (cardCvvInput.value.length < 3) {
+                markInvalid(cardCvvInput);
+                showToast('Please enter 3-digit CVV', true);
+                return;
+            }
+            
+            triggerProcessingFlow();
+        });
+    }
+
+    function markInvalid(element) {
+        if (!element) return;
+        element.classList.add('is-invalid', 'shake');
+        setTimeout(() => {
+            element.classList.remove('shake');
+        }, 400);
+        
+        // Remove red border when user starts typing again
+        element.addEventListener('input', () => {
+            element.classList.remove('is-invalid');
+        }, { once: true });
+    }
+
+    function triggerProcessingFlow() {
+        showDepositStep(4);
+        const amount = parseFloat(depositInput.value);
+        
+        // Simulation delay
+        setTimeout(() => {
+            const processingState = document.querySelector('.processing-state');
+            const successState = document.querySelector('.success-state');
+            if (processingState) processingState.classList.add('hidden');
+            if (successState) successState.classList.remove('hidden');
+            
+            const finalAmountEl = document.getElementById('final-deposit-amount');
+            if (finalAmountEl) finalAmountEl.textContent = formatCurrency(amount);
+
+            // Update Balance
+            state.balance += amount;
+            state.transactions.unshift({
+                id: generateId(),
+                type: 'deposit',
+                title: `Deposit via ${selectedBank}`,
+                date: new Date().toISOString(),
+                amount: amount
+            });
+            saveState();
+            addNotification('Deposit Successful', `Rs. ${formatCurrency(amount)} from ${selectedBank} added.`, 'success');
+        }, 2500);
+    }
 
     if (btnDepositVerify) {
         btnDepositVerify.addEventListener('click', () => {
@@ -710,32 +864,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast('Please enter 6-digit OTP', true);
                 return;
             }
-
-            showDepositStep(4);
-            const amount = parseFloat(depositInput.value);
-            
-            // Simulation delay
-            setTimeout(() => {
-                const processingState = document.querySelector('.processing-state');
-                const successState = document.querySelector('.success-state');
-                if (processingState) processingState.classList.add('hidden');
-                if (successState) successState.classList.remove('hidden');
-                
-                const finalAmountEl = document.getElementById('final-deposit-amount');
-                if (finalAmountEl) finalAmountEl.textContent = formatCurrency(amount);
-
-                // Update Balance
-                state.balance += amount;
-                state.transactions.unshift({
-                    id: generateId(),
-                    type: 'deposit',
-                    title: `Deposit via ${selectedBank}`,
-                    date: new Date().toISOString(),
-                    amount: amount
-                });
-                saveState();
-                addNotification('Deposit Successful', `Rs. ${formatCurrency(amount)} from ${selectedBank} added.`, 'success');
-            }, 2500);
+            triggerProcessingFlow();
         });
     }
 
@@ -748,8 +877,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 showDepositStep(1);
                 depositInput.value = '';
                 bankItems.forEach(b => b.classList.remove('active'));
-                if (btnDepositNext2) btnDepositNext2.disabled = true;
+                methodTiles.forEach(t => t.classList.remove('active'));
+                if (btnBankNext) btnBankNext.disabled = true;
                 otpBoxes.forEach(box => box.value = '');
+                if (p2pSenderInput) p2pSenderInput.value = '';
+                
+                // Clear card inputs too
+                if (cardNumInput) cardNumInput.value = '';
+                if (cardExpInput) cardExpInput.value = '';
+                if (cardCvvInput) cardCvvInput.value = '';
+                if (cardNameInput) cardNameInput.value = '';
+                if (previewNum) previewNum.textContent = '#### #### #### ####';
+                
                 const processingState = document.querySelector('.processing-state');
                 const successState = document.querySelector('.success-state');
                 if (processingState) processingState.classList.remove('hidden');

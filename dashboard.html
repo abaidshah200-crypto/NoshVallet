@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
 
     <div class="bg-mesh-container">
@@ -171,7 +173,8 @@
             <!-- Transactions View -->
             <main class="dashboard-content view-section hidden" id="view-transactions">
                 <div class="page-title with-back">
-                    <button class="content-back-btn" title="Back to Dashboard"><i class="fa-solid fa-arrow-left"></i></button>
+                    <button class="content-back-btn" title="Back to Dashboard"><i
+                            class="fa-solid fa-arrow-left"></i></button>
                     <div>
                         <h1>Transaction History</h1>
                         <p>A full record of all your wallet activities.</p>
@@ -179,7 +182,8 @@
                 </div>
                 <div class="widget-card full-transactions">
                     <div class="table-controls mb-4">
-                        <input type="text" id="tx-search" placeholder="Search by title or ID..." class="search-input-alt">
+                        <input type="text" id="tx-search" placeholder="Search by title or ID..."
+                            class="search-input-alt">
                         <select id="tx-filter" class="filter-select">
                             <option value="all">All Types</option>
                             <option value="deposit">Deposits</option>
@@ -207,7 +211,8 @@
             <!-- Analytics View -->
             <main class="dashboard-content view-section hidden" id="view-analytics">
                 <div class="page-title with-back">
-                    <button class="content-back-btn" title="Back to Dashboard"><i class="fa-solid fa-arrow-left"></i></button>
+                    <button class="content-back-btn" title="Back to Dashboard"><i
+                            class="fa-solid fa-arrow-left"></i></button>
                     <div>
                         <h1>Spending Analytics</h1>
                         <p>Understand your income and expenses visually.</p>
@@ -218,9 +223,18 @@
                         <h3 class="card-title">Monthly Flow</h3>
                         <div class="chart-container-dummy">
                             <div class="bar-chart">
-                                <div class="bar-set"><div class="bar pos" style="height: 60%"></div><div class="bar neg" style="height: 40%"></div><span>Jan</span></div>
-                                <div class="bar-set"><div class="bar pos" style="height: 80%"></div><div class="bar neg" style="height: 30%"></div><span>Feb</span></div>
-                                <div class="bar-set"><div class="bar pos" style="height: 45%"></div><div class="bar neg" style="height: 70%"></div><span>Mar</span></div>
+                                <div class="bar-set">
+                                    <div class="bar pos" style="height: 60%"></div>
+                                    <div class="bar neg" style="height: 40%"></div><span>Jan</span>
+                                </div>
+                                <div class="bar-set">
+                                    <div class="bar pos" style="height: 80%"></div>
+                                    <div class="bar neg" style="height: 30%"></div><span>Feb</span>
+                                </div>
+                                <div class="bar-set">
+                                    <div class="bar pos" style="height: 45%"></div>
+                                    <div class="bar neg" style="height: 70%"></div><span>Mar</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -244,7 +258,8 @@
             <main class="dashboard-content view-section hidden" id="view-settings">
                 <div class="page-title row-between with-back">
                     <div class="flex-center gap-4">
-                        <button class="content-back-btn" title="Back to Dashboard"><i class="fa-solid fa-arrow-left"></i></button>
+                        <button class="content-back-btn" title="Back to Dashboard"><i
+                                class="fa-solid fa-arrow-left"></i></button>
                         <div>
                             <h1>Account Settings</h1>
                             <p>Manage your profile, wallet security, and preferences.</p>
@@ -266,18 +281,20 @@
                             <div class="profile-header-premium">
                                 <div class="avatar-large-wrapper">
                                     <div class="avatar-large"><i class="fa-solid fa-user"></i></div>
-                                    <button class="avatar-edit-btn" title="Change Avatar"><i class="fa-solid fa-camera"></i></button>
+                                    <button class="avatar-edit-btn" title="Change Avatar"><i
+                                            class="fa-solid fa-camera"></i></button>
                                 </div>
                                 <div class="profile-meta">
                                     <h2 class="user-name">User Name</h2>
                                     <p class="user-email">user@example.com</p>
                                     <div class="flex-center gap-2 mt-2">
                                         <span class="member-badge">Diamond Member</span>
-                                        <span class="verification-badge"><i class="fa-solid fa-shield-check"></i> Verified</span>
+                                        <span class="verification-badge"><i class="fa-solid fa-shield-check"></i>
+                                            Verified</span>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <form id="settings-form" class="mt-4">
                                 <div class="form-grid">
                                     <div class="form-group">
@@ -292,7 +309,8 @@
                                         <label>Account Email</label>
                                         <div class="input-with-icon">
                                             <i class="fa-solid fa-envelope"></i>
-                                            <input type="email" id="settings-email" placeholder="Enter your email" required>
+                                            <input type="email" id="settings-email" placeholder="Enter your email"
+                                                required>
                                         </div>
                                         <span class="form-help">Update your contact information.</span>
                                     </div>
@@ -309,7 +327,8 @@
                                         <div class="input-with-icon">
                                             <i class="fa-solid fa-lock"></i>
                                             <input type="password" id="settings-pass" placeholder="••••••••">
-                                            <button type="button" class="password-toggle" title="Toggle Password Visibility">
+                                            <button type="button" class="password-toggle"
+                                                title="Toggle Password Visibility">
                                                 <i class="fa-solid fa-eye-slash"></i>
                                             </button>
                                         </div>
@@ -320,7 +339,8 @@
                                         <div class="input-with-icon">
                                             <i class="fa-solid fa-lock"></i>
                                             <input type="password" id="settings-pass-confirm" placeholder="••••••••">
-                                            <button type="button" class="password-toggle" title="Toggle Password Visibility">
+                                            <button type="button" class="password-toggle"
+                                                title="Toggle Password Visibility">
                                                 <i class="fa-solid fa-eye-slash"></i>
                                             </button>
                                         </div>
@@ -328,7 +348,8 @@
                                     </div>
                                 </div>
                                 <div class="text-right mt-3">
-                                    <button type="submit" class="submit-btn solid-yellow btn-small">Update Profile</button>
+                                    <button type="submit" class="submit-btn solid-yellow btn-small">Update
+                                        Profile</button>
                                 </div>
                             </form>
                         </div>
@@ -344,9 +365,11 @@
                                     <div class="s-info">
                                         <span class="s-label">Wallet Reference ID</span>
                                         <span class="s-value wallet-id">ID: NV-000000</span>
-                                        <p class="s-desc">Use this ID for receiving funds from other NoshWallet users.</p>
+                                        <p class="s-desc">Use this ID for receiving funds from other NoshWallet users.
+                                        </p>
                                     </div>
-                                    <button class="icon-btn-circle" title="Copy ID"><i class="fa-solid fa-copy"></i></button>
+                                    <button class="icon-btn-circle" title="Copy ID"><i
+                                            class="fa-solid fa-copy"></i></button>
                                 </div>
                                 <div class="security-item">
                                     <div class="s-info">
@@ -369,7 +392,8 @@
                                 <div class="pref-item">
                                     <div class="pref-info">
                                         <span class="pref-label">Email Notifications</span>
-                                        <p class="pref-desc">Receive weekly summaries and transaction alerts via email.</p>
+                                        <p class="pref-desc">Receive weekly summaries and transaction alerts via email.
+                                        </p>
                                     </div>
                                     <label class="toggle-switch">
                                         <input type="checkbox" checked>
@@ -379,7 +403,8 @@
                                 <div class="pref-item">
                                     <div class="pref-info">
                                         <span class="pref-label">Push Notifications</span>
-                                        <p class="pref-desc">Instant alerts for all wallet activity and security logins.</p>
+                                        <p class="pref-desc">Instant alerts for all wallet activity and security logins.
+                                        </p>
                                     </div>
                                     <label class="toggle-switch">
                                         <input type="checkbox" checked>
@@ -399,7 +424,8 @@
                             <div class="danger-box-premium">
                                 <div class="danger-info">
                                     <h4>Purge All Wallet Data</h4>
-                                    <p>This will permanently erase all transaction history, analytics data, and reset your balance. These actions are destructive and cannot be undone.</p>
+                                    <p>This will permanently erase all transaction history, analytics data, and reset
+                                        your balance. These actions are destructive and cannot be undone.</p>
                                 </div>
                                 <button class="btn-danger-premium" id="btn-reset-data">
                                     <i class="fa-solid fa-trash-can"></i> Reset Wallet
@@ -413,7 +439,8 @@
             <!-- Testing View -->
             <main class="dashboard-content view-section hidden" id="view-testing">
                 <div class="page-title with-back">
-                    <button class="content-back-btn" title="Back to Dashboard"><i class="fa-solid fa-arrow-left"></i></button>
+                    <button class="content-back-btn" title="Back to Dashboard"><i
+                            class="fa-solid fa-arrow-left"></i></button>
                     <div>
                         <h1>Developer Tools</h1>
                         <p>Experimental features and data injection for wallet testing.</p>
@@ -422,7 +449,8 @@
 
                 <div class="testing-page-wrapper">
                     <div class="settings-container-centered">
-                        <div class="widget-card settings-premium-card" style="border-left: 4px solid var(--primary-yellow);">
+                        <div class="widget-card settings-premium-card"
+                            style="border-left: 4px solid var(--primary-yellow);">
                             <div class="card-section-header">
                                 <i class="fa-solid fa-code"></i>
                                 <h3>Data Injection</h3>
@@ -431,9 +459,12 @@
                                 <div class="pref-item">
                                     <div class="pref-info">
                                         <span class="pref-label">Testing Data Injection</span>
-                                        <p class="pref-desc">Populate your wallet with random funds and transactions for testing flows.</p>
+                                        <p class="pref-desc">Populate your wallet with random funds and transactions for
+                                            testing flows.</p>
                                     </div>
-                                    <button class="btn-outline-small" id="btn-inject-test-data" style="color: var(--primary-yellow-hover); border-color: var(--primary-yellow);">Inject Funds</button>
+                                    <button class="btn-outline-small" id="btn-inject-test-data"
+                                        style="color: var(--primary-yellow-hover); border-color: var(--primary-yellow);">Inject
+                                        Funds</button>
                                 </div>
                             </div>
                         </div>
@@ -444,7 +475,8 @@
             <!-- Withdraw View -->
             <main class="dashboard-content view-section hidden" id="view-withdraw">
                 <div class="page-title with-back">
-                    <button class="content-back-btn" title="Back to Dashboard"><i class="fa-solid fa-arrow-left"></i></button>
+                    <button class="content-back-btn" title="Back to Dashboard"><i
+                            class="fa-solid fa-arrow-left"></i></button>
                     <div>
                         <h1>Withdraw Funds</h1>
                         <p>Transfer your NoshWallet balance to your linked bank account securely.</p>
@@ -457,7 +489,8 @@
                         <div class="widget-card premium-withdraw-card glass-premium">
                             <div class="withdraw-details-header text-center mb-4">
                                 <p class="text-sm text-muted mb-1">Total Available Balance</p>
-                                <h1 class="premium-balance-text">Rs. <span id="withdraw-page-available-balance">0.00</span></h1>
+                                <h1 class="premium-balance-text">Rs. <span
+                                        id="withdraw-page-available-balance">0.00</span></h1>
                             </div>
 
                             <form id="withdraw-page-form">
@@ -469,7 +502,8 @@
                                     </label>
                                     <div class="amount-input-wrapper">
                                         <span class="currency-prefix">Rs.</span>
-                                        <input type="number" id="withdraw-page-amount" placeholder="0.00" required min="1" step="0.01">
+                                        <input type="number" id="withdraw-page-amount" placeholder="0.00" required
+                                            min="1" step="0.01">
                                         <button type="button" class="max-btn" id="btn-withdraw-page-max">Max</button>
                                     </div>
                                 </div>
@@ -483,18 +517,21 @@
                                     <div id="withdraw-page-accounts-list">
                                         <!-- Populated by JS -->
                                     </div>
-                                    
+
                                     <button type="button" class="add-account-btn mt-3" id="btn-show-inline-add">
                                         <i class="fa-solid fa-plus-circle"></i> Add New Bank Account
                                     </button>
 
                                     <!-- Inline Add Bank Popup (Initially hidden via CSS opacity/visibility) -->
                                     <div id="inline-bank-modal" class="modal-overlay">
-                                        <div id="inline-add-bank-container" class="modal-content glass-premium p-0 border-none overflow-hidden">
+                                        <div id="inline-add-bank-container"
+                                            class="modal-content glass-premium p-0 border-none overflow-hidden">
                                             <div class="inline-form-card p-30">
                                                 <div class="modal-header mb-4">
                                                     <h2>Link New Bank Account</h2>
-                                                    <button type="button" class="close-btn" id="btn-close-inline-bank"><i class="fa-solid fa-xmark"></i></button>
+                                                    <button type="button" class="close-btn"
+                                                        id="btn-close-inline-bank"><i
+                                                            class="fa-solid fa-xmark"></i></button>
                                                 </div>
                                                 <div class="form-group mb-3">
                                                     <label>Bank Name</label>
@@ -509,15 +546,22 @@
                                                 </div>
                                                 <div class="form-group mb-3">
                                                     <label>Account Number / IBAN</label>
-                                                    <input type="text" id="withdraw-page-acc-num" placeholder="Enter Account # / IBAN" class="search-input-alt full-width p-14">
+                                                    <input type="text" id="withdraw-page-acc-num"
+                                                        placeholder="Enter Account # / IBAN"
+                                                        class="search-input-alt full-width p-14">
                                                 </div>
                                                 <div class="form-group mb-4">
                                                     <label>Account Holder Name</label>
-                                                    <input type="text" id="withdraw-page-holder" placeholder="Name on account" class="search-input-alt full-width p-14">
+                                                    <input type="text" id="withdraw-page-holder"
+                                                        placeholder="Name on account"
+                                                        class="search-input-alt full-width p-14">
                                                 </div>
                                                 <div class="flex-actions gap-2">
-                                                    <button type="button" class="submit-btn solid-yellow flex-1" id="btn-save-inline-bank">Link Account</button>
-                                                    <button type="button" class="btn-outline-small" id="btn-cancel-inline-bank" style="padding: 14px 20px;">Cancel</button>
+                                                    <button type="button" class="submit-btn solid-yellow flex-1"
+                                                        id="btn-save-inline-bank">Link Account</button>
+                                                    <button type="button" class="btn-outline-small"
+                                                        id="btn-cancel-inline-bank"
+                                                        style="padding: 14px 20px;">Cancel</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -529,7 +573,8 @@
                                     <h3 class="summary-title mb-4">Withdraw Summary</h3>
                                     <div class="summary-item">
                                         <span>Available Amount</span>
-                                        <span class="text-primary">Rs. <span id="summary-page-available-val">0.00</span></span>
+                                        <span class="text-primary">Rs. <span
+                                                id="summary-page-available-val">0.00</span></span>
                                     </div>
                                     <div class="summary-item">
                                         <span>Withdraw Amount</span>
@@ -541,12 +586,15 @@
                                     </div>
                                     <div class="summary-item total">
                                         <span>Amount to Receive</span>
-                                        <span class="text-primary">Rs. <span id="summary-page-receive-val">0.00</span></span>
+                                        <span class="text-primary">Rs. <span
+                                                id="summary-page-receive-val">0.00</span></span>
                                     </div>
                                 </div>
 
-                                <button type="submit" class="submit-btn solid-black mt-5 h-60 w-full">Confirm Withdrawal</button>
-                                <p class="helper-text mt-3 text-center">Funds will be credited to your bank within 24 hours.</p>
+                                <button type="submit" class="submit-btn solid-black mt-5 h-60 w-full">Confirm
+                                    Withdrawal</button>
+                                <p class="helper-text mt-3 text-center">Funds will be credited to your bank within 24
+                                    hours.</p>
                             </form>
                         </div>
                     </div>
@@ -554,341 +602,428 @@
             </main>
 
         </div>
-    <!-- Modals -->
+        <!-- Modals -->
 
-    <!-- Login Modal -->
-    <div id="login-modal" class="modal">
-        <div class="modal-content auth-modal">
-            <div class="modal-header">
-                <button class="close-btn absolute-right"><i class="fa-solid fa-xmark"></i></button>
-                <div class="logo justify-center mb-2">
-                    <i class="fa-solid fa-wallet"></i>
+        <!-- Login Modal -->
+        <div id="login-modal" class="modal">
+            <div class="modal-content auth-modal">
+                <div class="modal-header">
+                    <button class="close-btn absolute-right"><i class="fa-solid fa-xmark"></i></button>
+                    <div class="logo justify-center mb-2">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <h2>Welcome Back</h2>
+                    <p class="text-sm text-muted">Sign in to manage your wallet</p>
                 </div>
-                <h2>Welcome Back</h2>
-                <p class="text-sm text-muted">Sign in to manage your wallet</p>
-            </div>
-            <div class="modal-body pb-0">
-                <form id="login-form">
-                    <div class="form-group">
-                        <label>Email Address</label>
-                        <div class="input-with-icon">
-                            <i class="fa-regular fa-envelope"></i>
-                            <input type="email" id="login-email" placeholder="you@example.com" required autocomplete="off">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <div class="input-with-icon">
-                            <i class="fa-solid fa-lock"></i>
-                            <input type="password" id="login-password" placeholder="Enter your password" required autocomplete="new-password">
-                            <button type="button" class="password-toggle" title="Toggle Password Visibility">
-                                <i class="fa-solid fa-eye-slash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <button type="submit" class="submit-btn solid-yellow mt-4">Sign In</button>
-                </form>
-                <div class="auth-footer mt-4">
-                    <p>Don't have an account? <a href="#" id="switch-to-register">Sign up</a></p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Register Modal -->
-    <div id="register-modal" class="modal">
-        <div class="modal-content auth-modal">
-            <div class="modal-header border-none text-center block">
-                <button class="close-btn absolute-right"><i class="fa-solid fa-xmark"></i></button>
-                <div class="logo justify-center mb-2">
-                    <i class="fa-solid fa-wallet"></i>
-                </div>
-                <h2>Create Account</h2>
-                <p class="text-sm text-muted">Join us to start managing your funds</p>
-            </div>
-            <div class="modal-body pb-0">
-                <form id="register-form">
-                    <div class="form-group mb-3">
-                        <label>Full Name</label>
-                        <div class="input-with-icon">
-                            <i class="fa-regular fa-user"></i>
-                            <input type="text" id="reg-name" placeholder="John Doe" required autocomplete="name">
-                        </div>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label>Email Address</label>
-                        <div class="input-with-icon">
-                            <i class="fa-regular fa-envelope"></i>
-                            <input type="email" id="reg-email" placeholder="you@example.com" required autocomplete="email">
-                        </div>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label>Password</label>
-                        <div class="input-with-icon">
-                            <i class="fa-solid fa-lock"></i>
-                            <input type="password" id="reg-password" placeholder="Create a password" required minlength="6" autocomplete="new-password">
-                            <button type="button" class="password-toggle" title="Toggle Password Visibility">
-                                <i class="fa-solid fa-eye-slash"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <button type="submit" class="submit-btn solid-yellow">Create Account</button>
-                </form>
-                <div class="auth-footer mt-4">
-                    <p>Already have an account? <a href="#" id="switch-to-login">Sign in</a></p>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Deposit Modal -->
-    <div id="deposit-modal" class="modal">
-        <div class="modal-content glass-premium p-0 border-none overflow-hidden">
-            <div class="modal-header p-20 px-30 border-none">
-                <h2 id="deposit-modal-title" class="flex-1 text-center">Deposit Funds</h2>
-                <button type="button" class="close-btn" id="btn-close-deposit"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <div class="modal-body p-30 pt-0">
-                <!-- Step 1: Amount Entry -->
-                <div id="deposit-step-1" class="deposit-step">
-                    <form id="deposit-form">
-                        <div class="form-group mb-4">
-                            <label class="mb-2 block">Enter Amount (Rs.)</label>
-                            <div class="input-with-icon large">
-                                <i class="fa-solid fa-money-bill-wave"></i>
-                                <input type="number" id="deposit-amount" placeholder="0.00" required min="100" step="100">
+                <div class="modal-body pb-0">
+                    <form id="login-form">
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <div class="input-with-icon">
+                                <i class="fa-regular fa-envelope"></i>
+                                <input type="email" id="login-email" placeholder="you@example.com" required
+                                    autocomplete="off">
                             </div>
                         </div>
-                        <div class="quick-amounts mb-4">
-                            <button type="button" class="quick-btn" data-amount="500">+500</button>
-                            <button type="button" class="quick-btn" data-amount="1000">+1000</button>
-                            <button type="button" class="quick-btn" data-amount="5000">+5000</button>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-lock"></i>
+                                <input type="password" id="login-password" placeholder="Enter your password" required
+                                    autocomplete="new-password">
+                                <button type="button" class="password-toggle" title="Toggle Password Visibility">
+                                    <i class="fa-solid fa-eye-slash"></i>
+                                </button>
+                            </div>
                         </div>
-                        <button type="button" id="btn-deposit-next-1" class="submit-btn solid-yellow">Continue to Bank Selection</button>
+                        <button type="submit" class="submit-btn solid-yellow mt-4">Sign In</button>
+                    </form>
+                    <div class="auth-footer mt-4">
+                        <p>Don't have an account? <a href="#" id="switch-to-register">Sign up</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register Modal -->
+        <div id="register-modal" class="modal">
+            <div class="modal-content auth-modal">
+                <div class="modal-header border-none text-center block">
+                    <button class="close-btn absolute-right"><i class="fa-solid fa-xmark"></i></button>
+                    <div class="logo justify-center mb-2">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <h2>Create Account</h2>
+                    <p class="text-sm text-muted">Join us to start managing your funds</p>
+                </div>
+                <div class="modal-body pb-0">
+                    <form id="register-form">
+                        <div class="form-group mb-3">
+                            <label>Full Name</label>
+                            <div class="input-with-icon">
+                                <i class="fa-regular fa-user"></i>
+                                <input type="text" id="reg-name" placeholder="John Doe" required autocomplete="name">
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label>Email Address</label>
+                            <div class="input-with-icon">
+                                <i class="fa-regular fa-envelope"></i>
+                                <input type="email" id="reg-email" placeholder="you@example.com" required
+                                    autocomplete="email">
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label>Password</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-lock"></i>
+                                <input type="password" id="reg-password" placeholder="Create a password" required
+                                    minlength="6" autocomplete="new-password">
+                                <button type="button" class="password-toggle" title="Toggle Password Visibility">
+                                    <i class="fa-solid fa-eye-slash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="submit" class="submit-btn solid-yellow">Create Account</button>
+                    </form>
+                    <div class="auth-footer mt-4">
+                        <p>Already have an account? <a href="#" id="switch-to-login">Sign in</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Deposit Modal -->
+        <div id="deposit-modal" class="modal">
+            <div class="modal-content glass-premium p-0 border-none overflow-hidden">
+                <div class="modal-header p-20 px-30 border-none">
+                    <h2 id="deposit-modal-title" class="flex-1 text-center">Deposit Funds</h2>
+                    <button type="button" class="close-btn" id="btn-close-deposit"><i
+                            class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <div class="modal-body p-30 pt-0">
+                    <!-- Step 1: Amount Entry -->
+                    <div id="deposit-step-1" class="deposit-step">
+                        <form id="deposit-form">
+                            <div class="form-group mb-4">
+                                <label class="mb-2 block">Enter Amount (Rs.)</label>
+                                <div class="input-with-icon large">
+                                    <i class="fa-solid fa-money-bill-wave"></i>
+                                    <input type="number" id="deposit-amount" placeholder="0.00" required min="100"
+                                        step="100">
+                                </div>
+                            </div>
+                            <div class="quick-amounts mb-4">
+                                <button type="button" class="quick-btn" data-amount="500">+500</button>
+                                <button type="button" class="quick-btn" data-amount="1000">+1000</button>
+                                <button type="button" class="quick-btn" data-amount="5000">+5000</button>
+                            </div>
+                            <button type="button" id="btn-deposit-next-1" class="submit-btn solid-yellow">Select Payment Method</button>
+                        </form>
+                    </div>
+
+                    <!-- Step 2: Payment Method Selection -->
+                    <div id="deposit-step-2" class="deposit-step hidden">
+                        <p class="text-sm text-muted mb-4 text-center">How would you like to deposit funds?</p>
+                        <div class="method-selection-grid mb-4">
+                            <div class="method-tile" data-method="card">
+                                <div class="tile-icon"><i class="fa-solid fa-credit-card"></i></div>
+                                <div class="tile-name">Debit/Credit Card</div>
+                                <p class="tile-desc">Instant deposit via Visa or Mastercard</p>
+                            </div>
+                            <div class="method-tile" data-method="bank">
+                                <div class="tile-icon"><i class="fa-solid fa-building-columns"></i></div>
+                                <div class="tile-name">Bank Transfer</div>
+                                <p class="tile-desc">Direct transfer from your bank account</p>
+                            </div>
+                            <div class="method-tile" data-method="p2p">
+                                <div class="tile-icon"><i class="fa-solid fa-people-arrows"></i></div>
+                                <div class="tile-name">P2P Method</div>
+                                <p class="tile-desc">Request funds from another NoshVallet user</p>
+                            </div>
+                        </div>
+                        <div class="flex-row">
+                            <button type="button" id="btn-method-back" class="submit-btn outline flex-1">Back</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2.1: Bank Transfer Sub-step -->
+                    <div id="deposit-step-bank" class="deposit-step hidden">
+                        <p class="text-sm text-muted mb-4 text-center">Select your bank for secure top-up</p>
+                        <div class="bank-list-grid mb-4">
+                            <div class="bank-item" data-bank="HBL Bank">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <span>HBL Bank</span>
+                            </div>
+                            <div class="bank-item" data-bank="Meezan Bank">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <span>Meezan Bank</span>
+                            </div>
+                            <div class="bank-item" data-bank="Bank Alfalah">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <span>Bank Alfalah</span>
+                            </div>
+                            <div class="bank-item" data-bank="UBL Bank">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <span>UBL Bank</span>
+                            </div>
+                            <div class="bank-item" data-bank="MCB Bank">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <span>MCB Bank</span>
+                            </div>
+                            <div class="bank-item" data-bank="Allied Bank">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <span>Allied Bank</span>
+                            </div>
+                            <div class="bank-item" data-bank="Standard Chartered">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <span>SCB Bank</span>
+                            </div>
+                            <div class="bank-item" data-bank="Bank Al Habib">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <span>Bank Al Habib</span>
+                            </div>
+                            <div class="bank-item" data-bank="JazzCash">
+                                <i class="fa-solid fa-mobile-screen-button"></i>
+                                <span>JazzCash</span>
+                            </div>
+                            <div class="bank-item" data-bank="EasyPaisa">
+                                <i class="fa-solid fa-mobile-screen-button"></i>
+                                <span>EasyPaisa</span>
+                            </div>
+                            <div class="bank-item" data-bank="SadaPay">
+                                <i class="fa-solid fa-credit-card"></i>
+                                <span>SadaPay</span>
+                            </div>
+                            <div class="bank-item" data-bank="NayaPay">
+                                <i class="fa-solid fa-credit-card"></i>
+                                <span>NayaPay</span>
+                            </div>
+                        </div>
+                        <div class="flex-row gap-15 mt-4">
+                            <button type="button" id="btn-bank-back" class="submit-btn outline flex-1">Back</button>
+                            <button type="button" id="btn-bank-next" class="submit-btn solid-yellow flex-1"
+                                disabled>Proceed to Verify</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 2.5: Card Details (New) -->
+                    <div id="deposit-step-card" class="deposit-step hidden">
+                        <div class="card-element mb-4">
+                            <div class="credit-card-preview" id="card-preview">
+                                <div class="card-chip"></div>
+                                <div class="card-logo" id="preview-logo"><i class="fa-brands fa-cc-visa"></i></div>
+                                <div class="card-number-display" id="preview-number">#### #### #### ####</div>
+                                <div class="flex-row justify-between mt-auto">
+                                    <div class="card-holder-display">
+                                        <div class="label">Card Holder</div>
+                                        <div id="preview-name">FULL NAME</div>
+                                    </div>
+                                    <div class="card-expiry-display">
+                                        <div class="label">Expires</div>
+                                        <div id="preview-expiry">MM/YY</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="text-xs text-muted mb-1 block">Card Number</label>
+                            <input type="text" id="card-number-input" class="card-input"
+                                placeholder="0000 0000 0000 0000" maxlength="19">
+                        </div>
+                        <div class="flex-row gap-15 mb-3">
+                            <div class="form-group flex-1">
+                                <label class="text-xs text-muted mb-1 block">Expiry Date</label>
+                                <input type="text" id="card-expiry-input" class="card-input" placeholder="MM/YY"
+                                    maxlength="5">
+                            </div>
+                            <div class="form-group flex-1">
+                                <label class="text-xs text-muted mb-1 block">CVV</label>
+                                <input type="password" id="card-cvv-input" class="card-input" placeholder="***"
+                                    maxlength="3">
+                            </div>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label class="text-xs text-muted mb-1 block">Cardholder Name</label>
+                            <input type="text" id="card-name-input" class="card-input" placeholder="Enter name on card">
+                        </div>
+
+                        <div class="flex-row gap-15">
+                            <button type="button" id="btn-card-back" class="submit-btn outline flex-1">Back</button>
+                            <button type="button" id="btn-card-next" class="submit-btn solid-yellow flex-1">Pay &
+                                Deposit</button>
+                        </div>
+                    </div>
+
+
+                    <!-- Step 3: OTP Verification -->
+                    <div id="deposit-step-3" class="deposit-step hidden">
+                        <div class="text-center mb-4">
+                            <div class="icon-circle mb-3 mx-auto"><i class="fa-solid fa-shield-halved"></i></div>
+                            <h3>Verify OTP</h3>
+                            <p class="text-sm text-muted">Enter 6-digit code sent to your bank-linked mobile number</p>
+                        </div>
+                        <div class="otp-input-container mb-4">
+                            <input type="text" maxlength="1" class="otp-box" autofocus>
+                            <input type="text" maxlength="1" class="otp-box">
+                            <input type="text" maxlength="1" class="otp-box">
+                            <input type="text" maxlength="1" class="otp-box">
+                            <input type="text" maxlength="1" class="otp-box">
+                            <input type="text" maxlength="1" class="otp-box">
+                        </div>
+                        <div class="flex-row gap-15 mt-4">
+                            <button type="button" id="btn-deposit-back-3"
+                                class="submit-btn outline flex-1">Back</button>
+                            <button type="button" id="btn-deposit-verify" class="submit-btn solid-yellow flex-1">Verify
+                                & Deposit</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Processing & Success -->
+                    <div id="deposit-step-4" class="deposit-step hidden">
+                        <div class="processing-state text-center p-30">
+                            <div class="loading-spinner mb-4"></div>
+                            <h3>Connecting to Bank...</h3>
+                            <p class="text-sm text-muted">Verifying your transaction with secure servers</p>
+                        </div>
+                        <div class="success-state text-center p-30 hidden">
+                            <div class="success-amount-display mb-4">
+                                <span class="currency">Rs.</span>
+                                <span id="final-deposit-amount" class="amount">0.00</span>
+                            </div>
+                            <h2 class="text-success">Deposit Successful!</h2>
+                            <p class="text-muted mb-4">Funds have been added to your wallet</p>
+                            <button type="button" id="btn-deposit-finish" class="submit-btn solid-black">Back to
+                                Dashboard</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Improved Withdraw Modal -->
+
+
+
+
+        <!-- Send Money Modal -->
+        <div id="send-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Send Money</h2>
+                    <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body">
+                    <form id="send-form">
+                        <div class="form-group">
+                            <label>Receiver Wallet ID or Email</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-user-tag"></i>
+                                <input type="text" id="send-recipient" placeholder="Enter NV-ID or email..." required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Amount (Rs.)</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-money-bill-1"></i>
+                                <input type="number" id="send-amount" placeholder="0.00" required min="1" step="0.01">
+                            </div>
+                        </div>
+                        <button type="submit" class="submit-btn solid-black">Send Funds Now</button>
                     </form>
                 </div>
+            </div>
+        </div>
 
-                <!-- Step 2: Bank Selection -->
-                <div id="deposit-step-2" class="deposit-step hidden">
-                    <p class="text-sm text-muted mb-4 text-center">Select your bank for secure top-up</p>
-                    <div class="bank-list-grid mb-4">
-                        <div class="bank-item" data-bank="HBL Bank">
-                            <i class="fa-solid fa-building-columns"></i>
-                            <span>HBL Bank</span>
-                        </div>
-                        <div class="bank-item" data-bank="Meezan Bank">
-                            <i class="fa-solid fa-building-columns"></i>
-                            <span>Meezan Bank</span>
-                        </div>
-                        <div class="bank-item" data-bank="Bank Alfalah">
-                            <i class="fa-solid fa-building-columns"></i>
-                            <span>Bank Alfalah</span>
-                        </div>
-                        <div class="bank-item" data-bank="UBL Bank">
-                            <i class="fa-solid fa-building-columns"></i>
-                            <span>UBL Bank</span>
-                        </div>
-                        <div class="bank-item" data-bank="MCB Bank">
-                            <i class="fa-solid fa-building-columns"></i>
-                            <span>MCB Bank</span>
-                        </div>
-                        <div class="bank-item" data-bank="Allied Bank">
-                            <i class="fa-solid fa-building-columns"></i>
-                            <span>Allied Bank</span>
-                        </div>
-                        <div class="bank-item" data-bank="Standard Chartered">
-                            <i class="fa-solid fa-building-columns"></i>
-                            <span>SCB Bank</span>
-                        </div>
-                        <div class="bank-item" data-bank="Bank Al Habib">
-                            <i class="fa-solid fa-building-columns"></i>
-                            <span>Bank Al Habib</span>
-                        </div>
-                        <div class="bank-item" data-bank="JazzCash">
-                            <i class="fa-solid fa-mobile-screen-button"></i>
-                            <span>JazzCash</span>
-                        </div>
-                        <div class="bank-item" data-bank="EasyPaisa">
-                            <i class="fa-solid fa-mobile-screen-button"></i>
-                            <span>EasyPaisa</span>
-                        </div>
-                        <div class="bank-item" data-bank="SadaPay">
-                            <i class="fa-solid fa-credit-card"></i>
-                            <span>SadaPay</span>
-                        </div>
-                        <div class="bank-item" data-bank="NayaPay">
-                            <i class="fa-solid fa-credit-card"></i>
-                            <span>NayaPay</span>
-                        </div>
-                    </div>
-                    <div class="flex-row gap-15 mt-4">
-                        <button type="button" id="btn-deposit-back-2" class="submit-btn outline flex-1">Back</button>
-                        <button type="button" id="btn-deposit-next-2" class="submit-btn solid-yellow flex-1" disabled>Proceed to Verify</button>
-                    </div>
+        <!-- Pay (Merchant) Modal -->
+        <div id="pay-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Merchant Payment</h2>
+                    <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-
-                <!-- Step 3: OTP Verification -->
-                <div id="deposit-step-3" class="deposit-step hidden">
-                    <div class="text-center mb-4">
-                        <div class="icon-circle mb-3 mx-auto"><i class="fa-solid fa-shield-halved"></i></div>
-                        <h3>Verify OTP</h3>
-                        <p class="text-sm text-muted">Enter 6-digit code sent to your bank-linked mobile number</p>
-                    </div>
-                    <div class="otp-input-container mb-4">
-                        <input type="text" maxlength="1" class="otp-box" autofocus>
-                        <input type="text" maxlength="1" class="otp-box">
-                        <input type="text" maxlength="1" class="otp-box">
-                        <input type="text" maxlength="1" class="otp-box">
-                        <input type="text" maxlength="1" class="otp-box">
-                        <input type="text" maxlength="1" class="otp-box">
-                    </div>
-                    <div class="flex-row gap-15 mt-4">
-                        <button type="button" id="btn-deposit-back-3" class="submit-btn outline flex-1">Back</button>
-                        <button type="button" id="btn-deposit-verify" class="submit-btn solid-yellow flex-1">Verify & Deposit</button>
-                    </div>
-                </div>
-
-                <!-- Step 4: Processing & Success -->
-                <div id="deposit-step-4" class="deposit-step hidden">
-                    <div class="processing-state text-center p-30">
-                        <div class="loading-spinner mb-4"></div>
-                        <h3>Connecting to Bank...</h3>
-                        <p class="text-sm text-muted">Verifying your transaction with secure servers</p>
-                    </div>
-                    <div class="success-state text-center p-30 hidden">
-                        <div class="success-amount-display mb-4">
-                            <span class="currency">Rs.</span>
-                            <span id="final-deposit-amount" class="amount">0.00</span>
+                <div class="modal-body">
+                    <form id="pay-form">
+                        <div class="form-group">
+                            <label>Merchant Name</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-store"></i>
+                                <input type="text" id="pay-merchant" placeholder="Enter merchant name..." required>
+                            </div>
                         </div>
-                        <h2 class="text-success">Deposit Successful!</h2>
-                        <p class="text-muted mb-4">Funds have been added to your wallet</p>
-                        <button type="button" id="btn-deposit-finish" class="submit-btn solid-black">Back to Dashboard</button>
+                        <div class="form-group">
+                            <label>Amount (Rs.)</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-tag"></i>
+                                <input type="number" id="pay-amount" placeholder="0.00" required min="1" step="0.01">
+                            </div>
+                        </div>
+                        <button type="submit" class="submit-btn solid-yellow">Pay Merchant</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div id="toast" class="toast">
+            <div class="toast-indicator"></div>
+            <div class="toast-content">
+                <i class="toast-icon fa-solid fa-circle-check"></i>
+                <span id="toast-message">Operation successful!</span>
+            </div>
+        </div>
+
+        <script src="auth.js"></script>
+        <!-- 2FA Configuration Modal -->
+        <div id="two-fa-modal" class="modal">
+            <div class="modal-content auth-modal">
+                <div class="modal-header">
+                    <h2>Security Configuration</h2>
+                    <button class="close-btn" id="close-2fa-modal"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="modal-body">
+                    <p class="helper-text">Select your preferred two-factor authentication method to secure your
+                        transactions.</p>
+
+                    <div class="security-option-list">
+                        <div class="security-opt active">
+                            <div class="opt-icon"><i class="fa-solid fa-mobile-screen"></i></div>
+                            <div class="opt-details">
+                                <span class="opt-title">Authenticator App</span>
+                                <span class="opt-desc">Use Google Authenticator or Authy</span>
+                            </div>
+                            <i class="fa-solid fa-circle-check check-icon"></i>
+                        </div>
+
+                        <div class="security-opt">
+                            <div class="opt-icon"><i class="fa-solid fa-comment-sms"></i></div>
+                            <div class="opt-details">
+                                <span class="opt-title">SMS Verification</span>
+                                <span class="opt-desc">Codes sent to your registered phone</span>
+                            </div>
+                            <i class="fa-solid fa-circle-check check-icon"></i>
+                        </div>
+
+                        <div class="security-opt">
+                            <div class="opt-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+                            <div class="opt-details">
+                                <span class="opt-title">Email OTP</span>
+                                <span class="opt-desc">Receive codes in your inbox</span>
+                            </div>
+                            <i class="fa-solid fa-circle-check check-icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions mt-4">
+                        <button class="submit-btn solid-yellow" id="btn-save-2fa">Save Changes</button>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Improved Withdraw Modal -->
-
-
-
-    
-    <!-- Send Money Modal -->
-    <div id="send-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Send Money</h2>
-                <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body">
-                <form id="send-form">
-                    <div class="form-group">
-                        <label>Receiver Wallet ID or Email</label>
-                        <div class="input-with-icon">
-                            <i class="fa-solid fa-user-tag"></i>
-                            <input type="text" id="send-recipient" placeholder="Enter NV-ID or email..." required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Amount (Rs.)</label>
-                        <div class="input-with-icon">
-                            <i class="fa-solid fa-money-bill-1"></i>
-                            <input type="number" id="send-amount" placeholder="0.00" required min="1" step="0.01">
-                        </div>
-                    </div>
-                    <button type="submit" class="submit-btn solid-black">Send Funds Now</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Pay (Merchant) Modal -->
-    <div id="pay-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Merchant Payment</h2>
-                <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body">
-                <form id="pay-form">
-                    <div class="form-group">
-                        <label>Merchant Name</label>
-                        <div class="input-with-icon">
-                            <i class="fa-solid fa-store"></i>
-                            <input type="text" id="pay-merchant" placeholder="Enter merchant name..." required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Amount (Rs.)</label>
-                        <div class="input-with-icon">
-                            <i class="fa-solid fa-tag"></i>
-                            <input type="number" id="pay-amount" placeholder="0.00" required min="1" step="0.01">
-                        </div>
-                    </div>
-                    <button type="submit" class="submit-btn solid-yellow">Pay Merchant</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast -->
-    <div id="toast" class="toast">
-        <div class="toast-indicator"></div>
-        <div class="toast-content">
-            <i class="toast-icon fa-solid fa-circle-check"></i>
-            <span id="toast-message">Operation successful!</span>
-        </div>
-    </div>
-    
-    <script src="auth.js"></script>
-    <!-- 2FA Configuration Modal -->
-    <div id="two-fa-modal" class="modal">
-        <div class="modal-content auth-modal">
-            <div class="modal-header">
-                <h2>Security Configuration</h2>
-                <button class="close-btn" id="close-2fa-modal"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body">
-                <p class="helper-text">Select your preferred two-factor authentication method to secure your transactions.</p>
-                
-                <div class="security-option-list">
-                    <div class="security-opt active">
-                        <div class="opt-icon"><i class="fa-solid fa-mobile-screen"></i></div>
-                        <div class="opt-details">
-                            <span class="opt-title">Authenticator App</span>
-                            <span class="opt-desc">Use Google Authenticator or Authy</span>
-                        </div>
-                        <i class="fa-solid fa-circle-check check-icon"></i>
-                    </div>
-                    
-                    <div class="security-opt">
-                        <div class="opt-icon"><i class="fa-solid fa-comment-sms"></i></div>
-                        <div class="opt-details">
-                            <span class="opt-title">SMS Verification</span>
-                            <span class="opt-desc">Codes sent to your registered phone</span>
-                        </div>
-                        <i class="fa-solid fa-circle-check check-icon"></i>
-                    </div>
-                    
-                    <div class="security-opt">
-                        <div class="opt-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
-                        <div class="opt-details">
-                            <span class="opt-title">Email OTP</span>
-                            <span class="opt-desc">Receive codes in your inbox</span>
-                        </div>
-                        <i class="fa-solid fa-circle-check check-icon"></i>
-                    </div>
-                </div>
-
-                <div class="modal-actions mt-4">
-                    <button class="submit-btn solid-yellow" id="btn-save-2fa">Save Changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="app.js"></script>
+        <script src="app.js"></script>
 </body>
+
 </html>
