@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NoshWallet - Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -826,7 +826,7 @@
 
                     <!-- Step 2.5: Card Details (New) -->
                     <div id="deposit-step-card" class="deposit-step hidden">
-                        <div class="card-element mb-4">
+                        <div class="card-element mb-2">
                             <div class="credit-card-preview" id="card-preview">
                                 <div class="card-chip"></div>
                                 <div class="card-logo" id="preview-logo"><i class="fa-brands fa-cc-visa"></i></div>
@@ -844,12 +844,12 @@
                             </div>
                         </div>
 
-                        <div class="form-group mb-3">
+                        <div class="form-group mb-2">
                             <label class="text-xs text-muted mb-1 block">Card Number</label>
                             <input type="text" id="card-number-input" class="card-input"
                                 placeholder="0000 0000 0000 0000" maxlength="19">
                         </div>
-                        <div class="flex-row gap-15 mb-3">
+                        <div class="flex-row gap-15 mb-2">
                             <div class="form-group flex-1">
                                 <label class="text-xs text-muted mb-1 block">Expiry Date</label>
                                 <input type="text" id="card-expiry-input" class="card-input" placeholder="MM/YY"
@@ -861,12 +861,12 @@
                                     maxlength="3">
                             </div>
                         </div>
-                        <div class="form-group mb-4">
+                        <div class="form-group mb-3">
                             <label class="text-xs text-muted mb-1 block">Cardholder Name</label>
                             <input type="text" id="card-name-input" class="card-input" placeholder="Enter name on card">
                         </div>
 
-                        <div class="flex-row gap-15">
+                        <div class="flex-row gap-15 mt-2">
                             <button type="button" id="btn-card-back" class="submit-btn outline flex-1">Back</button>
                             <button type="button" id="btn-card-next" class="submit-btn solid-yellow flex-1">Pay &
                                 Deposit</button>

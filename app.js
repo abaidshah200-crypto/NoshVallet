@@ -604,10 +604,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const modal = e.target.closest('.modal');
             if (modal) {
                 modal.classList.remove('show');
+                if (modal.id === 'deposit-modal') showDepositStep(1);
             } else {
                 // Fallback in case e.target is the icon
                 const parentModal = btn.closest('.modal');
-                if (parentModal) parentModal.classList.remove('show');
+                if (parentModal) {
+                    parentModal.classList.remove('show');
+                    if (parentModal.id === 'deposit-modal') showDepositStep(1);
+                }
             }
         });
     });
@@ -617,6 +621,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('click', (e) => {
         if (e.target.classList.contains('modal')) {
             e.target.classList.remove('show');
+            if (e.target.id === 'deposit-modal') showDepositStep(1);
         }
     });
 
