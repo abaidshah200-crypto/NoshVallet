@@ -1379,6 +1379,36 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Custom Withdraw Select Logic ---
+    const withdrawBankDropdown = document.getElementById('withdraw-bank-dropdown');
+    if (withdrawBankDropdown) {
+        const trigger = withdrawBankDropdown.querySelector('.dropdown-trigger');
+        const menu = withdrawBankDropdown.querySelector('.dropdown-menu');
+        const hiddenInput = document.getElementById('withdraw-page-bank-name');
+        const selectedText = withdrawBankDropdown.querySelector('.selected-text');
+
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menu.classList.toggle('active');
+        });
+
+        const items = menu.querySelectorAll('.dropdown-item');
+        items.forEach(item => {
+            item.addEventListener('click', () => {
+                hiddenInput.value = item.dataset.value;
+                selectedText.textContent = item.textContent;
+                selectedText.classList.remove('text-muted');
+                menu.classList.remove('active');
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!withdrawBankDropdown.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        });
+    }
+
     // --- Initialization ---
     loadState(); // Boot up the app
     updateUI(); // Render the loaded state

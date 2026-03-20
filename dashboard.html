@@ -535,14 +535,36 @@
                                                 </div>
                                                 <div class="form-group mb-3">
                                                     <label>Bank Name</label>
-                                                    <select id="withdraw-page-bank-name" class="full-width-select">
-                                                        <option value="" disabled selected>Select Bank</option>
-                                                        <option value="HBL Bank">HBL Bank</option>
-                                                        <option value="Bank Alfalah">Bank Alfalah</option>
-                                                        <option value="JazzCash">JazzCash</option>
-                                                        <option value="EasyPaisa">EasyPaisa</option>
-                                                        <option value="Meezan Bank">Meezan Bank</option>
-                                                    </select>
+                                                    <div class="custom-dropdown" id="withdraw-bank-dropdown">
+                                                        <div class="dropdown-trigger">
+                                                            <span class="selected-text text-muted">Select Bank</span>
+                                                            <i class="fa-solid fa-chevron-down"></i>
+                                                        </div>
+                                                        <div class="dropdown-menu">
+                                                            <div class="dropdown-item" data-value="Habib Bank Limited (HBL)">Habib Bank Limited (HBL)</div>
+                                                            <div class="dropdown-item" data-value="MCB Bank Limited">MCB Bank Limited</div>
+                                                            <div class="dropdown-item" data-value="United Bank Limited (UBL)">United Bank Limited (UBL)</div>
+                                                            <div class="dropdown-item" data-value="Allied Bank Limited (ABL)">Allied Bank Limited (ABL)</div>
+                                                            <div class="dropdown-item" data-value="Bank Alfalah">Bank Alfalah</div>
+                                                            <div class="dropdown-item" data-value="Bank AL Habib">Bank AL Habib</div>
+                                                            <div class="dropdown-item" data-value="Askari Bank">Askari Bank</div>
+                                                            <div class="dropdown-item" data-value="Meezan Bank">Meezan Bank</div>
+                                                            <div class="dropdown-item" data-value="Faysal Bank">Faysal Bank</div>
+                                                            <div class="dropdown-item" data-value="JS Bank">JS Bank</div>
+                                                            <div class="dropdown-item" data-value="Soneri Bank">Soneri Bank</div>
+                                                            <div class="dropdown-item" data-value="HabibMetro Bank">HabibMetro Bank</div>
+                                                            <div class="dropdown-item" data-value="BankIslami">BankIslami</div>
+                                                            <div class="dropdown-item" data-value="Dubai Islamic Bank">Dubai Islamic Bank</div>
+                                                            <div class="dropdown-item" data-value="Standard Chartered Bank">Standard Chartered Bank</div>
+                                                            <div class="dropdown-item" data-value="Silkbank">Silkbank</div>
+                                                            <div class="dropdown-item" data-value="Samba Bank">Samba Bank</div>
+                                                            <div class="dropdown-item" data-value="JazzCash">JazzCash</div>
+                                                            <div class="dropdown-item" data-value="EasyPaisa">EasyPaisa</div>
+                                                            <div class="dropdown-item" data-value="SadaPay">SadaPay</div>
+                                                            <div class="dropdown-item" data-value="NayaPay">NayaPay</div>
+                                                        </div>
+                                                        <input type="hidden" id="withdraw-page-bank-name" value="">
+                                                    </div>
                                                 </div>
                                                 <div class="form-group mb-3">
                                                     <label>Account Number / IBAN</label>
@@ -768,37 +790,73 @@
                     <div id="deposit-step-bank" class="deposit-step hidden">
                         <p class="text-sm text-muted mb-4 text-center">Select your bank for secure top-up</p>
                         <div class="bank-list-grid mb-4">
-                            <div class="bank-item" data-bank="HBL Bank">
+                            <div class="bank-item" data-bank="Habib Bank Limited (HBL)">
                                 <i class="fa-solid fa-building-columns"></i>
-                                <span>HBL Bank</span>
+                                <span>HBL</span>
                             </div>
-                            <div class="bank-item" data-bank="Meezan Bank">
+                            <div class="bank-item" data-bank="MCB Bank Limited">
                                 <i class="fa-solid fa-building-columns"></i>
-                                <span>Meezan Bank</span>
+                                <span>MCB Bank</span>
+                            </div>
+                            <div class="bank-item" data-bank="United Bank Limited (UBL)">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <span>UBL</span>
+                            </div>
+                            <div class="bank-item" data-bank="Allied Bank Limited (ABL)">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <span>Allied Bank</span>
                             </div>
                             <div class="bank-item" data-bank="Bank Alfalah">
                                 <i class="fa-solid fa-building-columns"></i>
                                 <span>Bank Alfalah</span>
                             </div>
-                            <div class="bank-item" data-bank="UBL Bank">
+                            <div class="bank-item" data-bank="Bank AL Habib">
                                 <i class="fa-solid fa-building-columns"></i>
-                                <span>UBL Bank</span>
+                                <span>Bank AL Habib</span>
                             </div>
-                            <div class="bank-item" data-bank="MCB Bank">
+                            <div class="bank-item" data-bank="Askari Bank">
                                 <i class="fa-solid fa-building-columns"></i>
-                                <span>MCB Bank</span>
+                                <span>Askari Bank</span>
                             </div>
-                            <div class="bank-item" data-bank="Allied Bank">
+                            <div class="bank-item" data-bank="Meezan Bank">
                                 <i class="fa-solid fa-building-columns"></i>
-                                <span>Allied Bank</span>
+                                <span>Meezan Bank</span>
                             </div>
-                            <div class="bank-item" data-bank="Standard Chartered">
+                            <div class="bank-item" data-bank="Faysal Bank">
                                 <i class="fa-solid fa-building-columns"></i>
-                                <span>SCB Bank</span>
+                                <span>Faysal Bank</span>
                             </div>
-                            <div class="bank-item" data-bank="Bank Al Habib">
+                            <div class="bank-item" data-bank="JS Bank">
                                 <i class="fa-solid fa-building-columns"></i>
-                                <span>Bank Al Habib</span>
+                                <span>JS Bank</span>
+                            </div>
+                            <div class="bank-item" data-bank="Soneri Bank">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <span>Soneri Bank</span>
+                            </div>
+                            <div class="bank-item" data-bank="HabibMetro Bank">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <span>HabibMetro</span>
+                            </div>
+                            <div class="bank-item" data-bank="BankIslami">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <span>BankIslami</span>
+                            </div>
+                            <div class="bank-item" data-bank="Dubai Islamic Bank">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <span>Dubai Islamic</span>
+                            </div>
+                            <div class="bank-item" data-bank="Standard Chartered Bank">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <span>SCB</span>
+                            </div>
+                            <div class="bank-item" data-bank="Silkbank">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <span>Silkbank</span>
+                            </div>
+                            <div class="bank-item" data-bank="Samba Bank">
+                                <i class="fa-solid fa-building-columns"></i>
+                                <span>Samba Bank</span>
                             </div>
                             <div class="bank-item" data-bank="JazzCash">
                                 <i class="fa-solid fa-mobile-screen-button"></i>
