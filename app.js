@@ -734,6 +734,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // OTP Logic (Step 3)
     const otpBoxes = document.querySelectorAll('.otp-box');
+    const btnDepositVerify = document.getElementById('btn-deposit-verify');
+    const btnDepositBack3 = document.getElementById('btn-deposit-back-3');
+
+    if (btnDepositBack3) {
+        btnDepositBack3.addEventListener('click', () => {
+            // Go back to the correct previous step based on method
+            if (selectedBank === 'Debit Card') showDepositStep('card');
+            else if (selectedBank === 'P2P Transfer') showDepositStep('p2p');
+            else showDepositStep('bank');
+        });
+    }
+
     otpBoxes.forEach((box, idx) => {
         box.addEventListener('input', (e) => {
             if (e.target.value.length === 1 && idx < otpBoxes.length - 1) {

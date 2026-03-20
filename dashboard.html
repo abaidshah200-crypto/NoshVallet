@@ -748,6 +748,22 @@
                         </div>
                     </div>
 
+                    <!-- Step 2.2: P2P Method Sub-step (New) -->
+                    <div id="deposit-step-p2p" class="deposit-step hidden">
+                        <p class="text-sm text-muted mb-4 text-center">Enter sender's NoshVallet ID to request funds</p>
+                        <div class="form-group mb-4">
+                            <label class="mb-2 block">Sender Wallet ID / Email</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-user-tag"></i>
+                                <input type="text" id="p2p-sender-id" placeholder="NV-123456 or email...">
+                            </div>
+                        </div>
+                        <div class="flex-row gap-15 mt-4">
+                            <button type="button" id="btn-p2p-back" class="submit-btn outline flex-1">Back</button>
+                            <button type="button" id="btn-p2p-next" class="submit-btn solid-yellow flex-1">Request Funds</button>
+                        </div>
+                    </div>
+
                     <!-- Step 2.1: Bank Transfer Sub-step -->
                     <div id="deposit-step-bank" class="deposit-step hidden">
                         <p class="text-sm text-muted mb-4 text-center">Select your bank for secure top-up</p>
