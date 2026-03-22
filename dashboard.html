@@ -472,159 +472,135 @@
                 </div>
             </main>
 
-            <!-- Withdraw View -->
-            <main class="dashboard-content view-section hidden" id="view-withdraw">
-                <div class="page-title with-back">
-                    <button class="content-back-btn" title="Back to Dashboard"><i
-                            class="fa-solid fa-arrow-left"></i></button>
-                    <div>
-                        <h1>Withdraw Funds</h1>
-                        <p>Transfer your NoshWallet balance to your linked bank account securely.</p>
-                    </div>
-                </div>
+        </div>
+        <!-- Modals -->
 
-                <div class="withdraw-page-wrapper mt-4">
-                    <div class="withdraw-container-centered">
-                        <!-- Withdraw Main Card -->
-                        <div class="widget-card premium-withdraw-card glass-premium">
-                            <div class="withdraw-details-header text-center mb-4">
-                                <p class="text-sm text-muted mb-1">Total Available Balance</p>
-                                <h1 class="premium-balance-text">Rs. <span
-                                        id="withdraw-page-available-balance">0.00</span></h1>
+        <!-- Withdraw Modal -->
+        <div id="withdraw-modal" class="modal">
+            <div class="modal-content glass-premium p-0 border-none">
+                <div class="withdraw-form-card" style="padding: 20px;">
+                    <div class="modal-header mb-2">
+                        <h2>Withdraw Funds</h2>
+                        <button class="close-btn" id="btn-close-withdraw"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="withdraw-details-header text-center mb-3">
+                        <p class="text-sm text-muted mb-1">Total Available Balance</p>
+                        <h1 class="premium-balance-text">Rs. <span id="withdraw-page-available-balance">0.00</span></h1>
+                    </div>
+
+                    <form id="withdraw-page-form">
+                        <!-- Amount Input -->
+                        <div class="form-group">
+                            <label class="section-label-with-icon">
+                                <i class="fa-solid fa-money-bill-wave text-primary"></i>
+                                Enter Withdraw Amount
+                            </label>
+                            <div class="amount-input-wrapper">
+                                <span class="currency-prefix">Rs.</span>
+                                <input type="number" id="withdraw-page-amount" placeholder="0.00" required min="1" step="0.01">
+                                <button type="button" class="max-btn" id="btn-withdraw-page-max">Max</button>
+                            </div>
+                        </div>
+
+                        <!-- Saved Accounts Section -->
+                        <div class="saved-accounts-section mt-3">
+                            <div class="section-label-with-icon mb-2">
+                                <i class="fa-solid fa-building-columns text-primary"></i>
+                                <label>Select Withdraw Account</label>
+                            </div>
+                            <div id="withdraw-page-accounts-list">
+                                <!-- Populated by JS -->
                             </div>
 
-                            <form id="withdraw-page-form">
-                                <!-- Amount Input -->
-                                <div class="form-group">
-                                    <label class="section-label-with-icon">
-                                        <i class="fa-solid fa-money-bill-wave text-primary"></i>
-                                        Enter Withdraw Amount
-                                    </label>
-                                    <div class="amount-input-wrapper">
-                                        <span class="currency-prefix">Rs.</span>
-                                        <input type="number" id="withdraw-page-amount" placeholder="0.00" required
-                                            min="1" step="0.01">
-                                        <button type="button" class="max-btn" id="btn-withdraw-page-max">Max</button>
-                                    </div>
-                                </div>
+                            <button type="button" class="add-account-btn mt-2" id="btn-show-inline-add">
+                                <i class="fa-solid fa-plus-circle"></i> Add New Bank Account
+                            </button>
 
-                                <!-- Saved Accounts Section -->
-                                <div class="saved-accounts-section mt-5">
-                                    <div class="section-label-with-icon mb-3">
-                                        <i class="fa-solid fa-building-columns text-primary"></i>
-                                        <label>Select Withdraw Account</label>
-                                    </div>
-                                    <div id="withdraw-page-accounts-list">
-                                        <!-- Populated by JS -->
-                                    </div>
-
-                                    <button type="button" class="add-account-btn mt-3" id="btn-show-inline-add">
-                                        <i class="fa-solid fa-plus-circle"></i> Add New Bank Account
-                                    </button>
-
-                                    <!-- Inline Add Bank Popup (Initially hidden via CSS opacity/visibility) -->
-                                    <div id="inline-bank-modal" class="modal-overlay">
-                                        <div id="inline-add-bank-container"
-                                            class="modal-content glass-premium p-0 border-none">
-                                            <div class="inline-form-card p-30">
-                                                <div class="modal-header mb-4">
-                                                    <h2>Link New Bank Account</h2>
-                                                    <button type="button" class="close-btn"
-                                                        id="btn-close-inline-bank"><i
-                                                            class="fa-solid fa-xmark"></i></button>
+                            <!-- Inline Add Bank Popup (Initially hidden via CSS opacity/visibility) -->
+                            <div id="inline-bank-modal" class="modal-overlay">
+                                <div id="inline-add-bank-container" class="modal-content glass-premium p-0 border-none">
+                                    <div class="inline-form-card p-30">
+                                        <div class="modal-header mb-4">
+                                            <h2>Link New Bank Account</h2>
+                                            <button type="button" class="close-btn" id="btn-close-inline-bank"><i class="fa-solid fa-xmark"></i></button>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label>Bank Name</label>
+                                            <div class="custom-dropdown" id="withdraw-bank-dropdown">
+                                                <div class="dropdown-trigger">
+                                                    <span class="selected-text text-muted">Select Bank</span>
+                                                    <i class="fa-solid fa-chevron-down"></i>
                                                 </div>
-                                                <div class="form-group mb-3">
-                                                    <label>Bank Name</label>
-                                                    <div class="custom-dropdown" id="withdraw-bank-dropdown">
-                                                        <div class="dropdown-trigger">
-                                                            <span class="selected-text text-muted">Select Bank</span>
-                                                            <i class="fa-solid fa-chevron-down"></i>
-                                                        </div>
-                                                        <div class="dropdown-menu">
-                                                            <div class="dropdown-item" data-value="Habib Bank Limited (HBL)">Habib Bank Limited (HBL)</div>
-                                                            <div class="dropdown-item" data-value="MCB Bank Limited">MCB Bank Limited</div>
-                                                            <div class="dropdown-item" data-value="United Bank Limited (UBL)">United Bank Limited (UBL)</div>
-                                                            <div class="dropdown-item" data-value="Allied Bank Limited (ABL)">Allied Bank Limited (ABL)</div>
-                                                            <div class="dropdown-item" data-value="Bank Alfalah">Bank Alfalah</div>
-                                                            <div class="dropdown-item" data-value="Bank AL Habib">Bank AL Habib</div>
-                                                            <div class="dropdown-item" data-value="Askari Bank">Askari Bank</div>
-                                                            <div class="dropdown-item" data-value="Meezan Bank">Meezan Bank</div>
-                                                            <div class="dropdown-item" data-value="Faysal Bank">Faysal Bank</div>
-                                                            <div class="dropdown-item" data-value="JS Bank">JS Bank</div>
-                                                            <div class="dropdown-item" data-value="Soneri Bank">Soneri Bank</div>
-                                                            <div class="dropdown-item" data-value="HabibMetro Bank">HabibMetro Bank</div>
-                                                            <div class="dropdown-item" data-value="BankIslami">BankIslami</div>
-                                                            <div class="dropdown-item" data-value="Dubai Islamic Bank">Dubai Islamic Bank</div>
-                                                            <div class="dropdown-item" data-value="Standard Chartered Bank">Standard Chartered Bank</div>
-                                                            <div class="dropdown-item" data-value="Silkbank">Silkbank</div>
-                                                            <div class="dropdown-item" data-value="Samba Bank">Samba Bank</div>
-                                                            <div class="dropdown-item" data-value="JazzCash">JazzCash</div>
-                                                            <div class="dropdown-item" data-value="EasyPaisa">EasyPaisa</div>
-                                                            <div class="dropdown-item" data-value="SadaPay">SadaPay</div>
-                                                            <div class="dropdown-item" data-value="NayaPay">NayaPay</div>
-                                                        </div>
-                                                        <input type="hidden" id="withdraw-page-bank-name" value="">
-                                                    </div>
+                                                <div class="dropdown-menu">
+                                                    <div class="dropdown-item" data-value="Habib Bank Limited (HBL)">Habib Bank Limited (HBL)</div>
+                                                    <div class="dropdown-item" data-value="MCB Bank Limited">MCB Bank Limited</div>
+                                                    <div class="dropdown-item" data-value="United Bank Limited (UBL)">United Bank Limited (UBL)</div>
+                                                    <div class="dropdown-item" data-value="Allied Bank Limited (ABL)">Allied Bank Limited (ABL)</div>
+                                                    <div class="dropdown-item" data-value="Bank Alfalah">Bank Alfalah</div>
+                                                    <div class="dropdown-item" data-value="Bank AL Habib">Bank AL Habib</div>
+                                                    <div class="dropdown-item" data-value="Askari Bank">Askari Bank</div>
+                                                    <div class="dropdown-item" data-value="Meezan Bank">Meezan Bank</div>
+                                                    <div class="dropdown-item" data-value="Faysal Bank">Faysal Bank</div>
+                                                    <div class="dropdown-item" data-value="JS Bank">JS Bank</div>
+                                                    <div class="dropdown-item" data-value="Soneri Bank">Soneri Bank</div>
+                                                    <div class="dropdown-item" data-value="HabibMetro Bank">HabibMetro Bank</div>
+                                                    <div class="dropdown-item" data-value="BankIslami">BankIslami</div>
+                                                    <div class="dropdown-item" data-value="Dubai Islamic Bank">Dubai Islamic Bank</div>
+                                                    <div class="dropdown-item" data-value="Standard Chartered Bank">Standard Chartered Bank</div>
+                                                    <div class="dropdown-item" data-value="Silkbank">Silkbank</div>
+                                                    <div class="dropdown-item" data-value="Samba Bank">Samba Bank</div>
+                                                    <div class="dropdown-item" data-value="JazzCash">JazzCash</div>
+                                                    <div class="dropdown-item" data-value="EasyPaisa">EasyPaisa</div>
+                                                    <div class="dropdown-item" data-value="SadaPay">SadaPay</div>
+                                                    <div class="dropdown-item" data-value="NayaPay">NayaPay</div>
                                                 </div>
-                                                <div class="form-group mb-3">
-                                                    <label>Account Number / IBAN</label>
-                                                    <input type="text" id="withdraw-page-acc-num"
-                                                        placeholder="Enter Account # / IBAN"
-                                                        class="search-input-alt full-width p-14">
-                                                </div>
-                                                <div class="form-group mb-4">
-                                                    <label>Account Holder Name</label>
-                                                    <input type="text" id="withdraw-page-holder"
-                                                        placeholder="Name on account"
-                                                        class="search-input-alt full-width p-14">
-                                                </div>
-                                                <div class="flex-actions gap-2">
-                                                    <button type="button" class="submit-btn solid-yellow flex-1"
-                                                        id="btn-save-inline-bank">Link Account</button>
-                                                    <button type="button" class="btn-outline-small"
-                                                        id="btn-cancel-inline-bank"
-                                                        style="padding: 14px 20px;">Cancel</button>
-                                                </div>
+                                                <input type="hidden" id="withdraw-page-bank-name" value="">
                                             </div>
+                                        </div>
+                                        <div class="form-group mb-3">
+                                            <label>Account Number / IBAN</label>
+                                            <input type="text" id="withdraw-page-acc-num" placeholder="Enter Account # / IBAN" class="search-input-alt full-width p-14">
+                                        </div>
+                                        <div class="form-group mb-4">
+                                            <label>Account Holder Name</label>
+                                            <input type="text" id="withdraw-page-holder" placeholder="Name on account" class="search-input-alt full-width p-14">
+                                        </div>
+                                        <div class="flex-actions gap-2">
+                                            <button type="button" class="submit-btn solid-yellow flex-1" id="btn-save-inline-bank">Link Account</button>
+                                            <button type="button" class="btn-outline-small" id="btn-cancel-inline-bank" style="padding: 14px 20px;">Cancel</button>
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Withdraw Summary -->
-                                <div class="withdraw-summary-card mt-5">
-                                    <h3 class="summary-title mb-4">Withdraw Summary</h3>
-                                    <div class="summary-item">
-                                        <span>Available Amount</span>
-                                        <span class="text-primary">Rs. <span
-                                                id="summary-page-available-val">0.00</span></span>
-                                    </div>
-                                    <div class="summary-item">
-                                        <span>Withdraw Amount</span>
-                                        <span id="summary-page-withdraw-val">Rs. 0.00</span>
-                                    </div>
-                                    <div class="summary-item">
-                                        <span>Transaction Fee</span>
-                                        <span id="summary-page-fee-val">Rs. 0.00</span>
-                                    </div>
-                                    <div class="summary-item total">
-                                        <span>Amount to Receive</span>
-                                        <span class="text-primary">Rs. <span
-                                                id="summary-page-receive-val">0.00</span></span>
-                                    </div>
-                                </div>
-
-                                <button type="submit" class="submit-btn solid-black mt-5 h-60 w-full">Confirm
-                                    Withdrawal</button>
-                                <p class="helper-text mt-3 text-center">Funds will be credited to your bank within 24
-                                    hours.</p>
-                            </form>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </main>
 
+                        <!-- Withdraw Summary -->
+                        <div class="withdraw-summary-card mt-3" style="padding: 12px 15px;">
+                            <h3 class="summary-title mb-2">Withdraw Summary</h3>
+                            <div class="summary-item mb-1">
+                                <span>Available Amount</span>
+                                <span class="text-primary">Rs. <span id="summary-page-available-val">0.00</span></span>
+                            </div>
+                            <div class="summary-item mb-1">
+                                <span>Withdraw Amount</span>
+                                <span id="summary-page-withdraw-val">Rs. 0.00</span>
+                            </div>
+                            <div class="summary-item mb-1">
+                                <span>Transaction Fee</span>
+                                <span id="summary-page-fee-val">Rs. 0.00</span>
+                            </div>
+                            <div class="summary-item total mt-2 pt-2">
+                                <span>Amount to Receive</span>
+                                <span class="text-primary">Rs. <span id="summary-page-receive-val">0.00</span></span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="submit-btn solid-black mt-3 w-full" style="height: 45px;">Confirm Withdrawal</button>
+                        <p style="margin: 8px 0 0; text-align: center; font-size: 0.8rem; color: #888;">Funds will be credited to your bank within 24 hours.</p>
+                    </form>
+                </div>
+            </div>
         </div>
-        <!-- Modals -->
 
         <!-- Login Modal -->
         <div id="login-modal" class="modal">

@@ -593,6 +593,8 @@ document.addEventListener('DOMContentLoaded', () => {
             addNotification('Withdrawal Successful', `Rs. ${formatCurrency(amount - fee)} has been sent to your bank account.`, 'success');
             saveState();
             showToast('Withdrawal Processed!');
+            const withdrawModal = document.getElementById('withdraw-modal');
+            if (withdrawModal) withdrawModal.classList.remove('show');
             showView('dashboard');
         });
     }
@@ -1037,6 +1039,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const contentBackBtns = document.querySelectorAll('.content-back-btn');
 
     function showView(viewId) {
+        if (viewId === 'withdraw') {
+            const withdrawModal = document.getElementById('withdraw-modal');
+            if (withdrawModal) {
+                withdrawModal.classList.add('show');
+                renderWithdrawPage();
+            }
+            return;
+        }
+
         viewSections.forEach(section => section.classList.add('hidden'));
         navItems.forEach(item => item.classList.remove('active'));
 
@@ -1387,9 +1398,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const hiddenInput = document.getElementById('withdraw-page-bank-name');
         const selectedText = withdrawBankDropdown.querySelector('.selected-text');
 
+        // Teleport menu to body so parent overflow:scroll never clips it
+        document.body.appendChild(menu);
+
+        function openMenu() {
+            const rect = trigger.getBoundingClientRect();
+            menu.style.cssText = `
+                position: fixed !important;
+                top: ${rect.bottom + 2}px;
+                left: ${rect.left}px;
+                width: ${rect.width}px;
+                z-index: 999999;
+                display: flex;
+            `;
+            menu.classList.add('active');
+        }
+
+        function closeMenu() {
+            menu.style.display = '';
+            menu.classList.remove('active');
+        }
+
         trigger.addEventListener('click', (e) => {
             e.stopPropagation();
-            menu.classList.toggle('active');
+            menu.classList.contains('active') ? closeMenu() : openMenu();
         });
 
         const items = menu.querySelectorAll('.dropdown-item');
@@ -1398,13 +1430,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 hiddenInput.value = item.dataset.value;
                 selectedText.textContent = item.textContent;
                 selectedText.classList.remove('text-muted');
-                menu.classList.remove('active');
+                closeMenu();
             });
         });
 
         document.addEventListener('click', (e) => {
-            if (!withdrawBankDropdown.contains(e.target)) {
-                menu.classList.remove('active');
+            if (!trigger.contains(e.target) && !menu.contains(e.target)) {
+                closeMenu();
             }
         });
     }
