@@ -95,7 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     type: 'deposit',
                     title: 'Initial Wallet Top-up',
                     date: new Date(Date.now() - 86400000).toISOString(),
-                    amount: 2299.00
+                    amount: 2299.00,
+                    status: 'Completed'
                 }
             ];
             state.savedAccounts = [
@@ -230,13 +231,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const isDeposit = tx.type === 'deposit';
             const amountClass = isDeposit ? 'positive' : 'negative';
             const amountPrefix = isDeposit ? '+' : '-';
+            const status = tx.status || 'Completed';
+            const statusClass = status.toLowerCase();
 
             fullContainer.insertAdjacentHTML('beforeend', `
                 <tr>
-                    <td><strong>${tx.title}</strong></td>
-                    <td class="text-muted">${formatDate(tx.date)}</td>
                     <td><code class="t-ref">${tx.id.toUpperCase()}</code></td>
-                    <td class="text-right ${amountClass}">${amountPrefix} Rs. ${formatCurrency(tx.amount)}</td>
+                    <td><span class="t-type-badge ${tx.type}">${tx.type.toUpperCase()}</span></td>
+                    <td><strong>${tx.title}</strong></td>
+                    <td class="${amountClass}">${amountPrefix} Rs. ${formatCurrency(tx.amount)}</td>
+                    <td><span class="status-badge ${statusClass}">${status}</span></td>
+                    <td class="text-right text-muted">${formatDate(tx.date)}</td>
                 </tr>
             `);
         });
@@ -369,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (recentOnly.length === 0) {
             transactionsContainer.innerHTML = `
                 <tr>
-                    <td colspan="4">
+                    <td colspan="6">
                         <div class="empty-state">
                             <i class="fa-solid fa-clock-rotate-left"></i>
                             <p>No activity in the last 3 days</p>
@@ -385,27 +390,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         sortedDesc.forEach(tx => {
             const isDeposit = tx.type === 'deposit';
-            const isSend = tx.type === 'send';
-            const isPay = tx.type === 'pay';
-            
-            const iconClass = isDeposit ? 'deposit' : (isSend ? 'send' : (isPay ? 'pay' : 'withdraw'));
-            const iconFa = isDeposit ? 'fa-arrow-down' : (isSend ? 'fa-paper-plane' : (isPay ? 'fa-shop' : 'fa-arrow-up'));
             const amountPrefix = isDeposit ? '+' : '-';
             const amountClass = isDeposit ? 'positive' : 'negative';
+            const status = tx.status || 'Completed';
+            const statusClass = status.toLowerCase();
 
             const txHTML = `
                 <tr>
+                    <td><code class="t-ref">${tx.id.toUpperCase()}</code></td>
+                    <td><span class="t-type-badge ${tx.type}">${tx.type.toUpperCase()}</span></td>
                     <td>
                         <div class="t-details">
-                            <div class="t-icon ${iconClass}"><i class="fa-solid ${iconFa}"></i></div>
-                            <div>
-                                <div class="t-title">${tx.title}</div>
-                            </div>
+                            <div class="t-title">${tx.title}</div>
                         </div>
                     </td>
-                    <td class="t-date">${formatDate(tx.date)}</td>
-                    <td><span class="t-ref">REF-${tx.id.toUpperCase()}</span></td>
-                    <td class="text-right t-amt ${amountClass}">${amountPrefix} Rs. ${formatCurrency(tx.amount)}</td>
+                    <td class="t-amt ${amountClass}">${amountPrefix} Rs. ${formatCurrency(tx.amount)}</td>
+                    <td><span class="status-badge ${statusClass}">${status}</span></td>
+                    <td class="text-right t-date">${formatDate(tx.date)}</td>
                 </tr>
             `;
             transactionsContainer.insertAdjacentHTML('beforeend', txHTML);
@@ -644,7 +645,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 type: 'withdraw',
                 title: `Withdraw to ${bankName}`,
                 date: new Date().toISOString(),
-                amount: amount
+                amount: amount,
+                status: 'Completed'
             });
 
             addNotification('Withdrawal Successful', `Rs. ${formatCurrency(amount - fee)} has been sent to your bank account.`, 'success');
@@ -927,13 +929,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         cards.forEach(card => {
             card.addEventListener('click', () => {
-                const amount = parseFloat(depositAmountInput.value);
-                
-                // Validate amount before opening modal
-                if (!amount || amount < 100) {
-                    showToast('Please enter an amount of at least Rs. 100 first', true);
-                    return;
-                }
+                const amount = parseFloat(depositAmountInput ? depositAmountInput.value : 0) || 0;
 
                 cards.forEach(c => c.classList.remove('active'));
                 card.classList.add('active');
@@ -950,43 +946,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function openMethodModal(methodId, amount) {
-        if (methodId === 'mastercard') {
-            const modal = document.getElementById('mastercard-details-modal');
-            const amountEl = document.getElementById('mastercard-modal-amount');
-            if (modal) {
-                if (amountEl) amountEl.textContent = `Rs. ${formatCurrency(amount)}`;
-                modal.classList.add('show');
-            }
-        } 
-        else if (methodId === 'discover') {
-            const modal = document.getElementById('discover-details-modal');
-            const amountEl = document.getElementById('discover-modal-amount');
-            if (modal) {
-                if (amountEl) amountEl.textContent = `Rs. ${formatCurrency(amount)}`;
-                modal.classList.add('show');
-            }
-        }
-        else if (methodId === 'amex') {
-            const modal = document.getElementById('amex-details-modal');
-            const amountEl = document.getElementById('amex-modal-amount');
-            if (modal) {
-                if (amountEl) amountEl.textContent = `Rs. ${formatCurrency(amount)}`;
-                modal.classList.add('show');
-            }
-        }
-        else if (methodId === 'crypto') {
+        if (methodId === 'crypto') {
             const modal = document.getElementById('crypto-deposit-modal');
             const amountPayEl = document.getElementById('crypto-amount-pay');
             const amountReceiveEl = document.getElementById('crypto-amount-receive');
+            const currentAmount = depositAmountInput ? (parseFloat(depositAmountInput.value) || 0) : amount;
             
             if (modal) {
-                const usdtRate = 285; // Custom rate
-                const usdtAmount = (amount / usdtRate).toFixed(2);
+                const usdtRate = 285;
+                const usdtAmount = (currentAmount / usdtRate).toFixed(2);
+                const pkrToUsd = currentAmount > 0 ? (currentAmount / usdtRate).toFixed(2) : '0.00';
                 
-                if (amountPayEl) amountPayEl.textContent = `${usdtAmount} USDT`;
-                if (amountReceiveEl) amountReceiveEl.textContent = `${(amount / usdtRate).toFixed(2)} USD`;
+                if (amountPayEl) amountPayEl.textContent = currentAmount > 0 ? `${usdtAmount} USDT` : '--- USDT';
+                if (amountReceiveEl) amountReceiveEl.textContent = currentAmount > 0 ? `${pkrToUsd} USD` : '--- USD';
                 
-                showCryptoStep(1); // Reset to first step
+                showCryptoStep(1);
                 modal.classList.add('show');
             }
         }
@@ -995,16 +969,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const amountEl = document.getElementById('p2p-confirm-amount');
             if (modal) {
                 if (amountEl) amountEl.textContent = `Rs. ${formatCurrency(amount)}`;
-                showP2PStep(1); // Reset to first step
+                showP2PStep(1);
                 modal.classList.add('show');
             }
         }
-        else if (methodId === 'gpay') {
-            const modal = document.getElementById('gpay-deposit-modal');
-            const amountEl = document.getElementById('gpay-modal-amount');
-            if (modal) {
-                if (amountEl) amountEl.textContent = `Rs. ${formatCurrency(amount)}`;
-                modal.classList.add('show');
+        else {
+            // Show Premium "In Progress" Modal for all other methods (MasterCard, Discover, Amex, GPay)
+            const progressModal = document.getElementById('method-in-progress-modal');
+            if (progressModal) {
+                progressModal.classList.add('show');
             }
         }
     }
@@ -1019,7 +992,8 @@ document.addEventListener('DOMContentLoaded', () => {
             type: 'deposit',
             title: `Deposit via ${methodName.charAt(0).toUpperCase() + methodName.slice(1)}`,
             date: new Date().toISOString(),
-            amount: amount
+            amount: amount,
+            status: 'Completed'
         });
         
         saveState();
@@ -1182,12 +1156,20 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Reset Step 2 Checkbox and Button on each entry
+        // Reset Step 2 Checkbox and Button on each entry + refresh amount display
         if (stepNum === 2) {
             const checkbox = document.getElementById('cryptoPaymentConfirmed');
             const continueBtn = document.getElementById('btn-crypto-to-step-3');
             if (checkbox) checkbox.checked = false;
             if (continueBtn) continueBtn.disabled = true;
+
+            // Refresh amount from deposit input
+            const currentAmount = depositAmountInput ? (parseFloat(depositAmountInput.value) || 0) : 0;
+            const usdtRate = 285;
+            const amountPayEl = document.getElementById('crypto-amount-pay');
+            const amountReceiveEl = document.getElementById('crypto-amount-receive');
+            if (amountPayEl) amountPayEl.textContent = currentAmount > 0 ? `${(currentAmount / usdtRate).toFixed(2)} USDT` : '--- USDT';
+            if (amountReceiveEl) amountReceiveEl.textContent = currentAmount > 0 ? `${(currentAmount / usdtRate).toFixed(2)} USD` : '--- USD';
         }
     };
 
@@ -1209,8 +1191,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast('Please enter your Transaction Hash / ID', true);
                 return;
             }
-            const amount = parseFloat(depositAmountInput.value) || 0;
-            processDeposit('crypto', amount);
+            const amount = parseFloat(depositAmountInput ? depositAmountInput.value : 0) || 0;
+            if (!amount || amount < 100) {
+                showToast('Please enter a deposit amount of at least Rs. 100 on the deposit page', true);
+                return;
+            }
+            processDeposit(amount, 'crypto'); // Fixed: amount first, method second
             document.getElementById('crypto-deposit-modal').classList.remove('show');
         });
     }
@@ -1368,7 +1354,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         type: 'send',
                         title: `Sent to ${recipient}`,
                         date: new Date().toISOString(),
-                        amount: amount
+                        amount: amount,
+                        status: 'Completed'
                     });
                     saveState();
                     sendModal.classList.remove('show');
@@ -1395,7 +1382,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         type: 'pay',
                         title: `Payment: ${merchant}`,
                         date: new Date().toISOString(),
-                        amount: amount
+                        amount: amount,
+                        status: 'Completed'
                     });
                     saveState();
                     payModal.classList.remove('show');
@@ -1564,10 +1552,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         trigger.addEventListener('click', (e) => {
             e.stopPropagation();
-            menu.classList.toggle('active');
+            const isActive = menu.classList.toggle('active');
+            trigger.classList.toggle('active', isActive);
         });
 
-        document.addEventListener('click', () => menu.classList.remove('active'));
+        document.addEventListener('click', () => {
+            menu.classList.remove('active');
+            trigger.classList.remove('active');
+        });
     }
 
     // Settings Form
@@ -1794,7 +1786,8 @@ document.addEventListener('DOMContentLoaded', () => {
             type: 'deposit',
             title: isAuto ? 'Initial Test Credit' : 'Dev-Tool Injection',
             date: new Date().toISOString(),
-            amount: randomAmount
+            amount: randomAmount,
+            status: 'Completed'
         };
 
         state.balance += randomAmount;
