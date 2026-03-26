@@ -4,34 +4,66 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // --- Auth Check ---
     const currentUser = JSON.parse(sessionStorage.getItem('noshWalletAuth'));
-    
-    if (!currentUser) {
-        // Not logged in, redirect to landing page
-        window.location.href = 'index.html';
-        return;
-    }
-    // Build the user profile header since we are guaranteed logged in
     const authActionsContainer = document.getElementById('auth-actions-container');
-    if (authActionsContainer) {
-        // Clear buttons but preserve the notification-wrapper
-        const notifWrapper = authActionsContainer.querySelector('.notification-wrapper');
-        authActionsContainer.innerHTML = '';
-        if (notifWrapper) authActionsContainer.appendChild(notifWrapper);
+
+    if (!currentUser) {
+        // Guest mode: Show Guest Profile in header, keep notification wrapper
+        if (authActionsContainer) {
+            const notifWrapper = authActionsContainer.querySelector('.notification-wrapper');
+            authActionsContainer.innerHTML = '';
+            if (notifWrapper) authActionsContainer.appendChild(notifWrapper);
+            
+            authActionsContainer.insertAdjacentHTML('beforeend', `
+                <div class="user-profile guest" style="cursor: pointer;">
+                    <div class="avatar-small"><i class="fa-solid fa-user"></i></div>
+                    <span class="user-name">Guest (Log In)</span>
+                </div>
+            `);
+            
+            // Profile icon triggers login modal
+            const guestProfile = authActionsContainer.querySelector('.user-profile.guest');
+            if (guestProfile) {
+                guestProfile.addEventListener('click', () => {
+                    const loginModal = document.getElementById('login-modal');
+                    if (loginModal) loginModal.classList.add('show');
+                });
+            }
+        }
+
         
-        authActionsContainer.insertAdjacentHTML('beforeend', `
-            <div class="user-profile">
-                <div class="avatar-small"><i class="fa-solid fa-user"></i></div>
-                <span class="user-name">${currentUser.name}</span>
-            </div>
-        `);
+        // Disable sidebar navigation for guests except "Dashboard"
+        const navItems = document.querySelectorAll('.nav-item:not(#nav-dashboard):not(.logout)');
+        navItems.forEach(item => {
+            item.style.opacity = '0.5';
+            item.style.pointerEvents = 'none';
+        });
+
+        // Hide sensitive dashboard items or show login prompt
+        const balanceEl = document.getElementById('total-balance');
+        if (balanceEl) balanceEl.textContent = '---';
+    } else {
+        // Build the user profile header since we are logged in
+        if (authActionsContainer) {
+            // Clear buttons but preserve the notification-wrapper
+            const notifWrapper = authActionsContainer.querySelector('.notification-wrapper');
+            authActionsContainer.innerHTML = '';
+            if (notifWrapper) authActionsContainer.appendChild(notifWrapper);
+            
+            authActionsContainer.insertAdjacentHTML('beforeend', `
+                <div class="user-profile">
+                    <div class="avatar-small"><i class="fa-solid fa-user"></i></div>
+                    <span class="user-name">${currentUser.name}</span>
+                </div>
+            `);
+        }
+        
+        // Update user-specific UI info
+        const userNameElements = document.querySelectorAll('.user-name');
+        userNameElements.forEach(el => el.textContent = currentUser.name);
+        
+        const walletIdElements = document.querySelectorAll('.wallet-id');
+        walletIdElements.forEach(el => el.textContent = 'ID: ' + currentUser.walletId);
     }
-    
-    // Update other UI elements that need user info
-    const userNameElements = document.querySelectorAll('.user-name');
-    userNameElements.forEach(el => el.textContent = currentUser.name);
-    
-    const walletIdElements = document.querySelectorAll('.wallet-id');
-    walletIdElements.forEach(el => el.textContent = 'ID: ' + currentUser.walletId);
     
     // Handle Logout
     const logoutBtn = document.querySelector('.nav-item.logout');
@@ -39,9 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
             sessionStorage.removeItem('noshWalletAuth');
-            window.location.href = 'index.html'; // Redirect to landing
+            window.location.reload(); // Refresh to clear state and show guest view
         });
     }
+
 
     // --- State Management ---
     let state = {
@@ -160,22 +193,20 @@ document.addEventListener('DOMContentLoaded', () => {
         balanceEl.textContent = formatCurrency(state.balance);
 
         // Update Transactions List
+        renderSummaryStats();
         renderTransactions();
-
-        // Update Notifications
         renderNotifications();
         
         // Update Side Views if active
         renderFullTransactions();
         renderAnalytics();
         updateSettingsUI();
-        // renderSavedAccounts(); // Removed obsolete call
     }
 
     function renderFullTransactions() {
         const fullContainer = document.getElementById('full-transactions-container');
         const searchInput = document.getElementById('tx-search');
-        const typeFilter = document.getElementById('tx-filter');
+        const typeFilter = document.getElementById('tx-filter-value');
         if (!fullContainer) return;
 
         let filtered = [...state.transactions];
@@ -216,13 +247,37 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function renderSummaryStats() {
+        const creditStat = document.getElementById('stat-total-credits');
+        const debitStat = document.getElementById('stat-total-debits');
+        const recentStat = document.getElementById('stat-recent-count');
+        
+        if (!creditStat || !debitStat || !recentStat) return;
+
+        const totalCredits = state.transactions
+            .filter(t => t.type === 'deposit')
+            .reduce((sum, t) => sum + t.amount, 0);
+
+        const totalDebits = state.transactions
+            .filter(t => t.type === 'withdraw' || t.type === 'send' || t.type === 'pay')
+            .reduce((sum, t) => sum + t.amount, 0);
+
+        // Count for last 3 days
+        const threeDaysAgo = Date.now() - (3 * 24 * 60 * 60 * 1000);
+        const recentCount = state.transactions.filter(tx => new Date(tx.date).getTime() >= threeDaysAgo).length;
+
+        creditStat.textContent = `Rs. ${formatCurrency(totalCredits)}`;
+        debitStat.textContent = `Rs. ${formatCurrency(totalDebits)}`;
+        recentStat.textContent = recentCount;
+    }
+
     function renderAnalytics() {
         const incomeVal = document.getElementById('total-income-val');
         const expenseVal = document.getElementById('total-expense-val');
         if (!incomeVal || !expenseVal) return;
 
         const totalIncome = state.transactions.filter(t => t.type === 'deposit').reduce((sum, t) => sum + t.amount, 0);
-        const totalExpense = state.transactions.filter(t => t.type === 'withdraw').reduce((sum, t) => sum + t.amount, 0);
+        const totalExpense = state.transactions.filter(t => t.type === 'withdraw' || t.type === 'send' || t.type === 'pay').reduce((sum, t) => sum + t.amount, 0);
 
         incomeVal.textContent = `Rs. ${formatCurrency(totalIncome)}`;
         expenseVal.textContent = `Rs. ${formatCurrency(totalExpense)}`;
@@ -335,8 +390,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         sortedDesc.forEach(tx => {
             const isDeposit = tx.type === 'deposit';
-            const iconClass = isDeposit ? 'deposit' : 'withdraw';
-            const iconFa = isDeposit ? 'fa-arrow-down' : 'fa-arrow-up';
+            const isSend = tx.type === 'send';
+            const isPay = tx.type === 'pay';
+            
+            const iconClass = isDeposit ? 'deposit' : (isSend ? 'send' : (isPay ? 'pay' : 'withdraw'));
+            const iconFa = isDeposit ? 'fa-arrow-down' : (isSend ? 'fa-paper-plane' : (isPay ? 'fa-shop' : 'fa-arrow-up'));
             const amountPrefix = isDeposit ? '+' : '-';
             const amountClass = isDeposit ? 'positive' : 'negative';
 
@@ -375,8 +433,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnPay = document.getElementById('btn-pay');
     const closeBtns = document.querySelectorAll('.close-btn');
     // Forms
-    const depositForm = document.getElementById('deposit-form');
-    const depositInput = document.getElementById('deposit-amount');
+    const depositAmountInput = document.getElementById('deposit-amount-input-page');
+    const displayTotalDeposit = document.getElementById('display-total-deposit-page');
+    const paymentCards = document.querySelectorAll('.payment-card');
+    const btnDepositSubmitNew = document.getElementById('btn-deposit-submit-page');
+
     const sendForm = document.getElementById('send-form');
     const sendInput = document.getElementById('send-amount');
     const sendRecipient = document.getElementById('send-recipient');
@@ -390,8 +451,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Open Modals
     if (btnDeposit) {
         btnDeposit.addEventListener('click', () => {
-            depositInput.value = '';
-            depositModal.classList.add('show');
+            if (depositAmountInput) depositAmountInput.value = '';
+            showView('deposit');
+            if (typeof updateDepositSummary === 'function') updateDepositSummary();
         });
     }
 
@@ -848,76 +910,449 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { once: true });
     }
 
-    function triggerProcessingFlow() {
-        showDepositStep(4);
-        const amount = parseFloat(depositInput.value);
-        
-        // Simulation delay
-        setTimeout(() => {
-            const processingState = document.querySelector('.processing-state');
-            const successState = document.querySelector('.success-state');
-            if (processingState) processingState.classList.add('hidden');
-            if (successState) successState.classList.remove('hidden');
-            
-            const finalAmountEl = document.getElementById('final-deposit-amount');
-            if (finalAmountEl) finalAmountEl.textContent = formatCurrency(amount);
+    // --- Overhauled Deposit Logic ---
+    let selectedPaymentCard = 'mastercard'; // Default
+    console.log('Deposit logic initialized. Default card:', selectedPaymentCard);
 
-            // Update Balance
-            state.balance += amount;
-            state.transactions.unshift({
-                id: generateId(),
-                type: 'deposit',
-                title: `Deposit via ${selectedBank}`,
-                date: new Date().toISOString(),
-                amount: amount
-            });
-            saveState();
-            addNotification('Deposit Successful', `Rs. ${formatCurrency(amount)} from ${selectedBank} added.`, 'success');
-        }, 2500);
+    function updateDepositSummary() {
+        const val = parseFloat(depositAmountInput.value) || 0;
+        if (displayTotalDeposit) {
+            displayTotalDeposit.textContent = `Rs. ${formatCurrency(val)}`;
+        }
     }
 
-    if (btnDepositVerify) {
-        btnDepositVerify.addEventListener('click', () => {
-            const isOtpFilled = Array.from(otpBoxes).every(box => box.value.length === 1);
-            if (!isOtpFilled) {
-                showToast('Please enter 6-digit OTP', true);
+    if (depositAmountInput) {
+        depositAmountInput.addEventListener('input', updateDepositSummary);
+    }
+
+    // Delegate card selection and ensure initial state
+    function initCardSelection() {
+        const cards = document.querySelectorAll('.payment-card');
+        console.log('Found payment cards:', cards.length);
+        
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                const amount = parseFloat(depositAmountInput.value);
+                
+                // Validate amount before opening modal
+                if (!amount || amount < 100) {
+                    showToast('Please enter an amount of at least Rs. 100 first', true);
+                    return;
+                }
+
+                cards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                selectedPaymentCard = card.dataset.cardId;
+                
+                console.log('Instant Modal Trigger for:', selectedPaymentCard);
+                openMethodModal(selectedPaymentCard, amount);
+            });
+        });
+
+        // Set initial card from active class if present
+        const activeCard = document.querySelector('.payment-card.active');
+        if (activeCard) selectedPaymentCard = activeCard.dataset.cardId;
+    }
+
+    function openMethodModal(methodId, amount) {
+        if (methodId === 'mastercard') {
+            const modal = document.getElementById('mastercard-details-modal');
+            const amountEl = document.getElementById('mastercard-modal-amount');
+            if (modal) {
+                if (amountEl) amountEl.textContent = `Rs. ${formatCurrency(amount)}`;
+                modal.classList.add('show');
+            }
+        } 
+        else if (methodId === 'discover') {
+            const modal = document.getElementById('discover-details-modal');
+            const amountEl = document.getElementById('discover-modal-amount');
+            if (modal) {
+                if (amountEl) amountEl.textContent = `Rs. ${formatCurrency(amount)}`;
+                modal.classList.add('show');
+            }
+        }
+        else if (methodId === 'amex') {
+            const modal = document.getElementById('amex-details-modal');
+            const amountEl = document.getElementById('amex-modal-amount');
+            if (modal) {
+                if (amountEl) amountEl.textContent = `Rs. ${formatCurrency(amount)}`;
+                modal.classList.add('show');
+            }
+        }
+        else if (methodId === 'crypto') {
+            const modal = document.getElementById('crypto-deposit-modal');
+            const amountPayEl = document.getElementById('crypto-amount-pay');
+            const amountReceiveEl = document.getElementById('crypto-amount-receive');
+            
+            if (modal) {
+                const usdtRate = 285; // Custom rate
+                const usdtAmount = (amount / usdtRate).toFixed(2);
+                
+                if (amountPayEl) amountPayEl.textContent = `${usdtAmount} USDT`;
+                if (amountReceiveEl) amountReceiveEl.textContent = `${(amount / usdtRate).toFixed(2)} USD`;
+                
+                showCryptoStep(1); // Reset to first step
+                modal.classList.add('show');
+            }
+        }
+        else if (methodId === 'p2p') {
+            const modal = document.getElementById('p2p-deposit-modal');
+            const amountEl = document.getElementById('p2p-confirm-amount');
+            if (modal) {
+                if (amountEl) amountEl.textContent = `Rs. ${formatCurrency(amount)}`;
+                showP2PStep(1); // Reset to first step
+                modal.classList.add('show');
+            }
+        }
+        else if (methodId === 'gpay') {
+            const modal = document.getElementById('gpay-deposit-modal');
+            const amountEl = document.getElementById('gpay-modal-amount');
+            if (modal) {
+                if (amountEl) amountEl.textContent = `Rs. ${formatCurrency(amount)}`;
+                modal.classList.add('show');
+            }
+        }
+    }
+    initCardSelection();
+
+    // --- processDeposit is already defined below ---
+
+    function processDeposit(amount, methodName) {
+        state.balance += amount;
+        state.transactions.unshift({
+            id: generateId(),
+            type: 'deposit',
+            title: `Deposit via ${methodName.charAt(0).toUpperCase() + methodName.slice(1)}`,
+            date: new Date().toISOString(),
+            amount: amount
+        });
+        
+        saveState();
+        updateUI();
+        addNotification('Deposit Successful', `Rs. ${formatCurrency(amount)} added to your wallet.`, 'success');
+        
+        // Navigate Back
+        showView('dashboard');
+        showToast(`Successfully deposited Rs. ${formatCurrency(amount)}!`);
+        
+        // Reset
+        depositAmountInput.value = '';
+        updateDepositSummary();
+    }
+
+    const paymentDetailsForm = document.getElementById('payment-details-form');
+    if (paymentDetailsForm) {
+        paymentDetailsForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            console.log('Payment details submitted for:', selectedPaymentCard);
+            const amount = parseFloat(depositAmountInput.value);
+            document.getElementById('payment-details-modal').classList.remove('show');
+            processDeposit(amount, selectedPaymentCard);
+        });
+    }
+
+    const btnClosePaymentModal = document.getElementById('btn-close-payment-modal');
+    if (btnClosePaymentModal) {
+        btnClosePaymentModal.addEventListener('click', () => {
+            document.getElementById('payment-details-modal').classList.remove('show');
+        });
+    }
+
+    // Brand-Specific Modal Listeners (MasterCard, Discover, Amex)
+    const brandCardConfig = [
+        { form: 'mastercard-details-form', modal: 'mastercard-details-modal', close: 'btn-close-mastercard-modal' },
+        { form: 'discover-details-form', modal: 'discover-details-modal', close: 'btn-close-discover-modal' },
+        { form: 'amex-details-form', modal: 'amex-details-modal', close: 'btn-close-amex-modal' }
+    ];
+
+    brandCardConfig.forEach(config => {
+        const form = document.getElementById(config.form);
+        const modal = document.getElementById(config.modal);
+        const closeBtn = document.getElementById(config.close);
+
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const amount = parseFloat(depositAmountInput.value);
+                modal.classList.remove('show');
+                processDeposit(amount, selectedPaymentCard);
+            });
+        }
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => modal.classList.remove('show'));
+        }
+    });
+
+    const p2pBankData = {
+        'USA': {
+            bank: 'JPMorgan Chase Bank',
+            holder: 'Henry Thomas',
+            branch: 'New York Branch',
+            routing: '021000021',
+            iban: 'US11 6509 2696 9232 7577 50',
+            address: 'JPMorgan Chase Bank, 270 Park Avenue, NY 10017, USA',
+            receiver: '212 571 1298',
+            currency: 'USD'
+        },
+        'Canada': {
+            bank: 'Royal Bank of Canada (RBC)',
+            holder: 'Nosh Vallet Intl',
+            branch: 'Toronto HQ',
+            routing: '0039210',
+            iban: 'CA99 1002 0000 0000 0072',
+            address: '200 Bay St, Toronto, ON M5J 2J2, Canada',
+            receiver: '416 974 5151',
+            currency: 'CAD'
+        },
+        'UK': {
+            bank: 'Barclays Bank PLC',
+            holder: 'Nosh Vallet UK Ltd',
+            branch: 'London Canary Wharf',
+            routing: '20-00-00',
+            iban: 'GB29 BARC 2000 0092 4381 00',
+            address: '1 Churchill Place, London E14 5HP, UK',
+            receiver: '020 7116 1000',
+            currency: 'GBP'
+        },
+        'Germany': {
+            bank: 'Deutsche Bank',
+            holder: 'Nosh Vallet EU',
+            branch: 'Frankfurt Central',
+            routing: '100 700 24',
+            iban: 'DE44 1007 0024 3900 1122 33',
+            address: 'Taunusanlage 12, 60325 Frankfurt, Germany',
+            receiver: '+49 69 910-00',
+            currency: 'EUR'
+        },
+        'Pakistan': {
+            bank: 'Habib Bank Limited (HBL)',
+            holder: 'NOSH VALLET PVT LTD',
+            branch: 'Main Boulevard, Lahore',
+            routing: 'HBL000342',
+            iban: 'PK44 HABB 0003 4200 1182 9384',
+            address: 'HBL Tower, Blue Area, Islamabad, Pakistan',
+            receiver: '042 111 425 111',
+            currency: 'PKR'
+        },
+        'India': {
+            bank: 'ICICI Bank',
+            holder: 'Nosh Vallet India',
+            branch: 'Bandra Kurla, Mumbai',
+            routing: 'ICIC0000001',
+            iban: 'IN92 ICIC 6239 0011 2233 44',
+            address: 'ICICI Bank Towers, Mumbai 400051, India',
+            receiver: '1800 102 4242',
+            currency: 'INR'
+        },
+        'UAE': {
+            bank: 'Emirates NBD',
+            holder: 'Nosh Vallet UAE',
+            branch: 'Dubai Marina',
+            routing: 'ENBD0001',
+            iban: 'AE82 ENBD 9829 0000 1122 33',
+            address: 'Al Souq Al Kabeer, Dubai, UAE',
+            receiver: '+971 600 540000',
+            currency: 'AED'
+        }
+    };
+
+    // --- Crypto Multi-Step Logic ---
+    window.showCryptoStep = function(stepNum) {
+        console.log('Switching to Crypto Step:', stepNum);
+        
+        // Update Content Visibility
+        for (let i = 1; i <= 3; i++) {
+            const content = document.getElementById(`crypto-step-content-${i}`);
+            const tab = document.getElementById(`crypto-step-tab-${i}`);
+            if (content) {
+                if (i === stepNum) content.classList.remove('hidden-step');
+                else content.classList.add('hidden-step');
+            }
+            if (tab) {
+                if (i < stepNum) {
+                    tab.classList.add('completed');
+                    tab.classList.remove('active');
+                    const circle = tab.querySelector('.modal-step-circle');
+                    if (circle) circle.innerHTML = '<i class="fa-solid fa-check"></i>';
+                } else if (i === stepNum) {
+                    tab.classList.add('active');
+                    tab.classList.remove('completed');
+                    const circle = tab.querySelector('.modal-step-circle');
+                    if (circle) circle.textContent = stepNum;
+                } else {
+                    tab.classList.remove('active', 'completed');
+                    const circle = tab.querySelector('.modal-step-circle');
+                    if (circle) circle.textContent = i;
+                }
+            }
+        }
+
+        // Reset Step 2 Checkbox and Button on each entry
+        if (stepNum === 2) {
+            const checkbox = document.getElementById('cryptoPaymentConfirmed');
+            const continueBtn = document.getElementById('btn-crypto-to-step-3');
+            if (checkbox) checkbox.checked = false;
+            if (continueBtn) continueBtn.disabled = true;
+        }
+    };
+
+    // Confirmation Checkbox Logic (Crypto)
+    const cryptoConfirmCheckbox = document.getElementById('cryptoPaymentConfirmed');
+    if (cryptoConfirmCheckbox) {
+        cryptoConfirmCheckbox.addEventListener('change', (e) => {
+            const continueBtn = document.getElementById('btn-crypto-to-step-3');
+            if (continueBtn) continueBtn.disabled = !e.target.checked;
+        });
+    }
+
+    // Final Crypto Submission
+    const btnCryptoFinalSubmit = document.getElementById('btn-crypto-final-submit');
+    if (btnCryptoFinalSubmit) {
+        btnCryptoFinalSubmit.addEventListener('click', () => {
+            const hash = document.getElementById('crypto-hash-input').value;
+            if (!hash) {
+                showToast('Please enter your Transaction Hash / ID', true);
                 return;
             }
-            triggerProcessingFlow();
+            const amount = parseFloat(depositAmountInput.value) || 0;
+            processDeposit('crypto', amount);
+            document.getElementById('crypto-deposit-modal').classList.remove('show');
         });
     }
 
-    const btnDepositFinish = document.getElementById('btn-deposit-finish');
-    if (btnDepositFinish) {
-        btnDepositFinish.addEventListener('click', () => {
-            depositModal.classList.remove('show');
-            // Reset modal for next time
-            setTimeout(() => {
-                showDepositStep(1);
-                depositInput.value = '';
-                bankItems.forEach(b => b.classList.remove('active'));
-                methodTiles.forEach(t => t.classList.remove('active'));
-                if (btnBankNext) btnBankNext.disabled = true;
-                otpBoxes.forEach(box => box.value = '');
-                if (p2pSenderInput) p2pSenderInput.value = '';
+    // --- P2P Multi-Step Logic ---
+    window.showP2PStep = function(stepNum) {
+        console.log('Switching to P2P Step:', stepNum);
+        
+        // Update Content Visibility
+        for (let i = 1; i <= 3; i++) {
+            const content = document.getElementById(`p2p-step-content-${i}`);
+            const tab = document.getElementById(`p2p-step-tab-${i}`);
+            if (content) {
+                if (i === stepNum) content.classList.remove('hidden-step');
+                else content.classList.add('hidden-step');
+            }
+            if (tab) {
+                if (i < stepNum) {
+                    tab.classList.add('completed');
+                    tab.classList.remove('active');
+                } else if (i === stepNum) {
+                    tab.classList.add('active');
+                    tab.classList.remove('completed');
+                } else {
+                    tab.classList.remove('active', 'completed');
+                }
+            }
+        }
+
+        // Reset Step 2 Checkbox and Button on each entry
+        if (stepNum === 2) {
+            const checkbox = document.getElementById('p2p-confirm-checkbox');
+            const continueBtn = document.getElementById('btn-p2p-to-step-3');
+            if (checkbox) checkbox.checked = false;
+            if (continueBtn) continueBtn.disabled = true;
+        }
+    };
+
+    // Initialize P2P Account Card Listeners
+    const p2pAccountCards = document.querySelectorAll('.p2p-account-card');
+    p2pAccountCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const country = card.dataset.country;
+            const amount = parseFloat(depositAmountInput.value) || 0;
+            const data = p2pBankData[country];
+
+            if (data) {
+                console.log('Injecting P2P Data for:', country);
                 
-                // Clear card inputs too
-                if (cardNumInput) cardNumInput.value = '';
-                if (cardExpInput) cardExpInput.value = '';
-                if (cardCvvInput) cardCvvInput.value = '';
-                if (cardNameInput) cardNameInput.value = '';
-                if (previewNum) previewNum.textContent = '#### #### #### ####';
+                // Update UI Elements
+                document.getElementById('p2p-detail-flag').src = `https://flagcdn.com/w80/${card.dataset.flag}.png`;
+                document.getElementById('p2p-detail-country').textContent = country === 'USA' ? 'United States' : country;
+                document.getElementById('p2p-detail-currency').textContent = `${data.currency} | ${data.iban.slice(-7)}`;
+                document.getElementById('p2p-alert-country').textContent = country;
                 
-                const processingState = document.querySelector('.processing-state');
-                const successState = document.querySelector('.success-state');
-                if (processingState) processingState.classList.remove('hidden');
-                if (successState) successState.classList.add('hidden');
-            }, 500);
+                // Detailed Grid
+                document.getElementById('p2p-val-holder').textContent = data.holder;
+                document.getElementById('p2p-val-bank').textContent = data.bank;
+                document.getElementById('p2p-val-branch').textContent = data.branch;
+                document.getElementById('p2p-val-routing').textContent = data.routing;
+                document.getElementById('p2p-val-iban').textContent = data.iban;
+                document.getElementById('p2p-val-receiver').textContent = data.receiver;
+                document.getElementById('p2p-val-address').textContent = data.address;
+
+                // Form Section
+                const formattedAmount = `${data.currency === 'USD' || data.currency === 'EUR' || data.currency === 'GBP' ? '$' : ''}${formatCurrency(amount)} ${data.currency}`;
+                document.getElementById('p2p-exact-amount').textContent = formattedAmount;
+                document.getElementById('p2p-amount-sent-input').value = formattedAmount;
+                document.getElementById('p2p-hint-amount').textContent = formattedAmount;
+
+                showP2PStep(2);
+            }
+        });
+    });
+
+    // Confirmation Checkbox Logic
+    const p2pConfirmCheckbox = document.getElementById('p2p-confirm-checkbox');
+    if (p2pConfirmCheckbox) {
+        p2pConfirmCheckbox.addEventListener('change', (e) => {
+            const continueBtn = document.getElementById('btn-p2p-to-step-3');
+            if (continueBtn) continueBtn.disabled = !e.target.checked;
         });
     }
 
-    if (depositForm) {
-        depositForm.addEventListener('submit', (e) => e.preventDefault());
+    // Final P2P Submission
+    const btnP2PFinalSubmit = document.getElementById('btn-p2p-final-submit');
+    if (btnP2PFinalSubmit) {
+        btnP2PFinalSubmit.addEventListener('click', () => {
+            const amount = parseFloat(depositAmountInput.value);
+            const refId = document.getElementById('p2p-ref-id-input').value;
+            
+            if (!refId || refId.length < 5) {
+                showToast('Please enter a valid Transaction Reference ID', true);
+                return;
+            }
+
+            console.log('P2P Final Submit:', { amount, refId });
+            document.getElementById('p2p-deposit-modal').classList.remove('show');
+            processDeposit(amount, 'p2p');
+        });
+    }
+
+    // Existing Modal Listeners
+    const newModalConfig = [
+        { btn: 'btn-crypto-confirm', modal: 'crypto-deposit-modal', close: 'btn-close-crypto-modal' },
+        { btn: 'btn-p2p-confirm', modal: 'p2p-deposit-modal', close: 'btn-close-p2p-modal' },
+        { btn: 'btn-gpay-confirm', modal: 'gpay-deposit-modal' }
+    ];
+
+    newModalConfig.forEach(config => {
+        const confirmBtn = document.getElementById(config.btn);
+        const modal = document.getElementById(config.modal);
+        if (confirmBtn) {
+            confirmBtn.addEventListener('click', () => {
+                const amount = parseFloat(depositAmountInput.value);
+                modal.classList.remove('show');
+                processDeposit(amount, selectedPaymentCard);
+            });
+        }
+        if (config.close) {
+            const closeBtn = document.getElementById(config.close);
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => modal.classList.remove('show'));
+            }
+        }
+    });
+
+    // Remove the unused submit listener for btnDepositSubmitNew since it's now instant
+    if (btnDepositSubmitNew) {
+        btnDepositSubmitNew.style.display = 'none'; 
+    }
+
+    // Initialize balance on modal open
+    if (btnDeposit) {
+        btnDeposit.addEventListener('click', () => {
+            updateDepositSummary();
+        });
     }
 
 
@@ -935,7 +1370,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     state.balance -= amount;
                     state.transactions.unshift({
                         id: generateId(),
-                        type: 'withdraw',
+                        type: 'send',
                         title: `Sent to ${recipient}`,
                         date: new Date().toISOString(),
                         amount: amount
@@ -962,7 +1397,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     state.balance -= amount;
                     state.transactions.unshift({
                         id: generateId(),
-                        type: 'withdraw',
+                        type: 'pay',
                         title: `Payment: ${merchant}`,
                         date: new Date().toISOString(),
                         amount: amount
@@ -1085,7 +1520,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Transaction search/filter events
     const globalSearch = document.getElementById('global-search');
     const txSearch = document.getElementById('tx-search');
-    const txFilter = document.getElementById('tx-filter');
+    const txFilterDropdown = document.getElementById('tx-filter-dropdown');
 
     if (globalSearch) {
         globalSearch.addEventListener('input', () => {
@@ -1109,7 +1544,36 @@ document.addEventListener('DOMContentLoaded', () => {
         if (globalSearch) globalSearch.value = e.target.value;
         renderFullTransactions();
     });
-    if (txFilter) txFilter.addEventListener('change', renderFullTransactions);
+    if (txFilterDropdown) {
+        const trigger = txFilterDropdown.querySelector('.dropdown-trigger');
+        const menu = txFilterDropdown.querySelector('.dropdown-menu');
+        const hiddenValueInput = document.getElementById('tx-filter-value');
+        const selectedLabel = document.getElementById('tx-filter-selected');
+        
+        // Items logic
+        const items = menu.querySelectorAll('.dropdown-item');
+        items.forEach(item => {
+            item.addEventListener('click', () => {
+                const val = item.dataset.value;
+                hiddenValueInput.value = val;
+                selectedLabel.textContent = item.textContent;
+                
+                // Active class management
+                items.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                menu.classList.remove('active'); // Close menu
+                renderFullTransactions(); // Trigger filter
+            });
+        });
+
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menu.classList.toggle('active');
+        });
+
+        document.addEventListener('click', () => menu.classList.remove('active'));
+    }
 
     // Settings Form
     const settingsForm = document.getElementById('settings-form');
