@@ -31,12 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         
-        // Disable sidebar navigation for guests except "Dashboard"
-        const navItems = document.querySelectorAll('.nav-item:not(#nav-dashboard):not(.logout)');
-        navItems.forEach(item => {
-            item.style.opacity = '0.5';
-            item.style.pointerEvents = 'none';
-        });
+        // Allow sidebar navigation for guests (no forced disable)
 
         // Hide sensitive dashboard items or show login prompt
         const balanceEl = document.getElementById('total-balance');
