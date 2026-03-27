@@ -292,6 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateSettingsUI() {
+        if (!currentUser) return;
         // Update all email displays
         document.querySelectorAll('.user-email').forEach(el => el.textContent = currentUser.email);
         
@@ -455,9 +456,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnWithdraw) {
         btnWithdraw.addEventListener('click', () => {
+            if (withdrawPageAmountInput) withdrawPageAmountInput.value = '';
             showView('withdraw');
+            renderWithdrawPage();
         });
     }
+
+
 
     if (btnSend) {
         btnSend.addEventListener('click', () => {
@@ -475,7 +480,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Withdrawal Logic (Page View) ---
+    // --- Withdrawal Logic (Modal) ---
+    const withdrawModal = document.getElementById('withdraw-modal');
+
     function renderWithdrawPage() {
         const balanceDisplay = document.getElementById('withdraw-page-available-balance');
         const summaryAvailable = document.getElementById('summary-page-available-val');
@@ -558,6 +565,8 @@ document.addEventListener('DOMContentLoaded', () => {
         btnShowInlineAdd.addEventListener('click', () => {
             if (inlineBankModal) {
                 inlineBankModal.classList.add('show');
+                // Re-init dropdown to ensure it works correctly inside the active modal
+                initBankDropdown();
             }
         });
     }
@@ -652,8 +661,6 @@ document.addEventListener('DOMContentLoaded', () => {
             addNotification('Withdrawal Successful', `Rs. ${formatCurrency(amount - fee)} has been sent to your bank account.`, 'success');
             saveState();
             showToast('Withdrawal Processed!');
-            const withdrawModal = document.getElementById('withdraw-modal');
-            if (withdrawModal) withdrawModal.classList.remove('show');
             showView('dashboard');
         });
     }
@@ -1457,15 +1464,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const contentBackBtns = document.querySelectorAll('.content-back-btn');
 
     function showView(viewId) {
-        if (viewId === 'withdraw') {
-            const withdrawModal = document.getElementById('withdraw-modal');
-            if (withdrawModal) {
-                withdrawModal.classList.add('show');
-                renderWithdrawPage();
-            }
-            return;
-        }
-
         viewSections.forEach(section => section.classList.add('hidden'));
         navItems.forEach(item => item.classList.remove('active'));
 
@@ -1478,12 +1476,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Scroll to top on view change
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        // Refresh dynamic content
-        if (viewId === 'transactions') renderFullTransactions();
-        if (viewId === 'analytics') renderAnalytics();
-        if (viewId === 'withdraw') renderWithdrawPage();
-    }
+        if (viewId === 'withdraw') {
+             renderWithdrawPage();
+        }
 
+        if (viewId === 'analytics') renderAnalytics();
+    }
     contentBackBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             if (globalSearch) globalSearch.value = ''; // Clear search when going back
@@ -1710,7 +1708,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnConfigure2FA && twoFAModal) {
         btnConfigure2FA.addEventListener('click', () => {
             // Pre-select current method
-            const currentMethod = currentUser.twoFA || 'Authenticator App';
+            const currentMethod = currentUser ? (currentUser.twoFA || 'Authenticator App') : 'Authenticator App';
             securityOptions.forEach(opt => {
                 const title = opt.querySelector('.opt-title').textContent;
                 if (title === currentMethod) {
@@ -1745,14 +1743,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 setTimeout(() => {
                     // Persistence logic
-                    currentUser.twoFA = activeOpt;
-                    sessionStorage.setItem('noshWalletAuth', JSON.stringify(currentUser));
-                    
-                    const allUsers = getAllUsers();
-                    const userIndex = allUsers.findIndex(u => u.email === currentUser.email);
-                    if (userIndex !== -1) {
-                        allUsers[userIndex] = currentUser;
-                        saveAllUsers(allUsers);
+                    if (currentUser) {
+                        currentUser.twoFA = activeOpt;
+                        sessionStorage.setItem('noshWalletAuth', JSON.stringify(currentUser));
+                        
+                        const allUsers = getAllUsers();
+                        const userIndex = allUsers.findIndex(u => u.email === currentUser.email);
+                        if (userIndex !== -1) {
+                            allUsers[userIndex] = currentUser;
+                            saveAllUsers(allUsers);
+                        }
                     }
 
                     twoFAModal.classList.remove('show');
@@ -1842,56 +1842,90 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Custom Withdraw Select Logic ---
-    const withdrawBankDropdown = document.getElementById('withdraw-bank-dropdown');
-    if (withdrawBankDropdown) {
-        const trigger = withdrawBankDropdown.querySelector('.dropdown-trigger');
-        const menu = withdrawBankDropdown.querySelector('.dropdown-menu');
-        const hiddenInput = document.getElementById('withdraw-page-bank-name');
-        const selectedText = withdrawBankDropdown.querySelector('.selected-text');
 
-        // Teleport menu to body so parent overflow:scroll never clips it
-        document.body.appendChild(menu);
+
+
+    // --- Custom Withdraw Select Logic (Robust Init) ---
+    function initBankDropdown() {
+        const dropdown = document.getElementById('withdraw-bank-dropdown');
+        if (!dropdown) return;
+
+        const trigger = dropdown.querySelector('.dropdown-trigger');
+        const menu = dropdown.querySelector('.dropdown-menu');
+        const hiddenInput = document.getElementById('withdraw-page-bank-name');
+        const selectedText = dropdown.querySelector('.selected-text');
+
+        if (!trigger || !menu) return;
+
+        // Teleport menu to body so it never gets clipped by parent overflow
+        if (menu.parentElement !== document.body) {
+            document.body.appendChild(menu);
+        }
 
         function openMenu() {
             const rect = trigger.getBoundingClientRect();
-            menu.style.cssText = `
-                position: fixed !important;
-                top: ${rect.bottom + 2}px;
-                left: ${rect.left}px;
-                width: ${rect.width}px;
-                z-index: 999999;
-                display: flex;
-            `;
+            // Position fixed relative to viewport for modal compatibility
+            menu.style.position = 'fixed';
+            menu.style.top = (rect.bottom + 5) + 'px';
+            menu.style.left = rect.left + 'px';
+            menu.style.width = rect.width + 'px';
+            menu.style.zIndex = '9999999'; // Ensure it's above everything
+            menu.style.display = 'flex';
+            
             menu.classList.add('active');
+            trigger.classList.add('active');
         }
 
         function closeMenu() {
-            menu.style.display = '';
             menu.classList.remove('active');
+            trigger.classList.remove('active');
+            menu.style.display = 'none';
         }
 
-        trigger.addEventListener('click', (e) => {
+        // Clean up previous listeners if any (simple way is to clone and replace, but here we just re-bind)
+        // For production, we'd removeEventListener, but event delegation inside a function called on modal open works well
+        const newTrigger = trigger.cloneNode(true);
+        trigger.parentNode.replaceChild(newTrigger, trigger);
+
+        newTrigger.addEventListener('click', (e) => {
             e.stopPropagation();
-            menu.classList.contains('active') ? closeMenu() : openMenu();
+            const isOpen = menu.classList.contains('active');
+            if (isOpen) closeMenu();
+            else openMenu();
         });
 
+        // Delegate selection
         const items = menu.querySelectorAll('.dropdown-item');
         items.forEach(item => {
-            item.addEventListener('click', () => {
-                hiddenInput.value = item.dataset.value;
-                selectedText.textContent = item.textContent;
+            const newItem = item.cloneNode(true);
+            item.parentNode.replaceChild(newItem, item);
+
+            newItem.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const val = newItem.getAttribute('data-value');
+                hiddenInput.value = val;
+                selectedText.textContent = newItem.textContent;
                 selectedText.classList.remove('text-muted');
+                
+                // Active state
+                menu.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('active'));
+                newItem.classList.add('active');
+                
                 closeMenu();
             });
         });
 
         document.addEventListener('click', (e) => {
-            if (!trigger.contains(e.target) && !menu.contains(e.target)) {
+            if (!newTrigger.contains(e.target) && !menu.contains(e.target)) {
                 closeMenu();
             }
         });
+
+        window.addEventListener('resize', closeMenu);
     }
+
+    // Initial call on load
+    initBankDropdown();
 
     // --- Initialization ---
     loadState(); // Boot up the app
